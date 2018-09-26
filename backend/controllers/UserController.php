@@ -9,7 +9,7 @@
 namespace backend\controllers;
 
 use backend\actions\ViewAction;
-use Yii;
+use yii;
 use frontend\models\User;
 use frontend\models\search\UserSearch;
 use backend\actions\CreateAction;
@@ -27,9 +27,8 @@ class UserController extends \yii\web\Controller
             'index' => [
                 'class' => IndexAction::className(),
                 'data' => function(){
-                    /** @var UserSearch $searchModel */
-                    $searchModel = Yii::createObject(UserSearch::className());
-                    $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
+                    $searchModel = new UserSearch();
+                    $dataProvider = $searchModel->search(yii::$app->getRequest()->getQueryParams());
                     return [
                         'dataProvider' => $dataProvider,
                         'searchModel' => $searchModel,

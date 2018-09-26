@@ -8,7 +8,7 @@
 
 namespace backend\models;
 
-use Yii;
+use yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\helpers\FileDependencyHelper;
@@ -16,14 +16,6 @@ use common\helpers\FamilyTree;
 
 class Menu extends \common\models\Menu
 {
-
-    public function init()
-    {
-        parent::init();
-        $this->on(self::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_AFTER_DELETE, [$this, 'afterDeleteEvent']);
-    }
 
     /**
      * 生成后台首页菜单html
@@ -34,10 +26,10 @@ class Menu extends \common\models\Menu
     {
         $model = new self();
         $menus = $model->find()->where(['is_display' => self::DISPLAY_YES, 'type' => self::BACKEND_TYPE])->orderBy("sort asc")->asArray()->all();
-        $permissions = Yii::$app->getAuthManager()->getPermissionsByUser(Yii::$app->getUser()->getId());
+        $permissions = yii::$app->getAuthManager()->getPermissionsByUser(yii::$app->getUser()->getId());
         $permissions = array_keys($permissions);
 
-        if( !in_array( Yii::$app->getUser()->getId(), Yii::$app->getBehavior('access')->superAdminUserIds ) ) {
+        if( !in_array( yii::$app->getUser()->getId(), yii::$app->getBehavior('access')->superAdminUserIds ) ) {
             $newMenu = [];
             foreach ($menus as $menu) {
                 $url = $menu['url'];
@@ -70,7 +62,7 @@ class Menu extends \common\models\Menu
                 $arrow = ' arrow';
                 $class = '';
             }
-            $menuName = Yii::t('menu', $menu['name']);
+            $menuName = yii::t('menu', $menu['name']);
             $lis .= <<<EOF
                     <li>
                         <a {$class} href="{$menu['url']}">
@@ -107,7 +99,7 @@ EOF;
             } else {
                 $arrow = '<span class="fa arrow"></span>';
             }
-            $menu_name = Yii::t('menu', $menu['name']);
+            $menu_name = yii::t('menu', $menu['name']);
             $subMenu .= <<<EOF
 
                             <li>
@@ -165,19 +157,27 @@ EOF;
         return $familyTree->getDescendants($id);
     }
 
-    public function afterSaveEvent($event)
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
     {
-        $event->sender->removeBackendMenuCache();
+        parent::afterSave($insert, $changedAttributes);
+        $this->removeBackendMenuCache();
     }
 
-    public function afterDeleteEvent($event)
+    /**
+     * @inheritdoc
+     */
+    public function afterDelete()
     {
-        $event->sender->removeBackendMenuCache();
+        parent::afterDelete();
+        $this->removeBackendMenuCache();
     }
 
     public function removeBackendMenuCache()
     {
-        $object = Yii::createObject([
+        $object = yii::createObject([
             'class' => FileDependencyHelper::className(),
             'fileName' => 'backend_menu.txt',
         ]);

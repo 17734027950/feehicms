@@ -5,7 +5,6 @@
  * Email: job@feehi.com
  * Created at: 2018-02-24 22:14
  */
-
 use yii\widgets\DetailView;
 
 /** @var $model common\models\Category */
@@ -16,7 +15,7 @@ use yii\widgets\DetailView;
         'id',
         'parent_id',
         [
-            'label' => Yii::t('app', 'Parent Category Name'),
+            'label' => yii::t('app', 'Parent Category Name'),
             'attribute' => 'parent_id',
             'value' => function($model){
                 return $model->parent === null ? '' : $model->parent->name;

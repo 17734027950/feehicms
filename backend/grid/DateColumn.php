@@ -62,7 +62,7 @@ class DateColumn extends DataColumn
                 });
             });
 str;
-        Yii::$app->getView()->registerJs($laydateJs, View::POS_END);
+        yii::$app->getView()->registerJs($laydateJs, View::POS_END);
 
         if ($this->grid->filterModel->hasErrors($this->attribute)) {
             Html::addCssClass($this->filterOptions, 'has-error');

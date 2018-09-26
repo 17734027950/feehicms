@@ -121,15 +121,6 @@ class Db
     {
     }
 
-    /**
-     * Set the lock waiting interval for the database session
-     * @param int $seconds
-     * @return void
-     */
-    public function setWaitLock($seconds)
-    {
-    }
-
     public function load($sql)
     {
         $query = '';
@@ -233,7 +224,7 @@ class Db
 
         return 'WHERE ' . implode('AND ', $params);
     }
-
+    
     /**
      * @deprecated use deleteQueryByCriteria instead
      */

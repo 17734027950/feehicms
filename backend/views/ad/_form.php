@@ -10,7 +10,6 @@
  * @var $this yii\web\View
  * @var $model frontend\models\User
  */
-
 use backend\widgets\ActiveForm;
 use common\libs\Constants;
 use common\widgets\JsBlock;

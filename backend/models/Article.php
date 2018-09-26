@@ -8,7 +8,7 @@
 
 namespace backend\models;
 
-use Yii;
+use yii;
 use common\helpers\Util;
 use common\libs\Constants;
 use common\models\meta\ArticleMetaTag;
@@ -25,27 +25,15 @@ class Article extends \common\models\Article
      */
     public $content = null;
 
-
-    public function init()
-    {
-        parent::init();
-        $this->on(self::EVENT_AFTER_VALIDATE, [$this, 'afterValidateEvent']);
-        $this->on(self::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_AFTER_INSERT, [$this, 'afterSaveEvent']);
-        $this->on(self::EVENT_AFTER_UPDATE, [$this, 'afterSaveEvent']);
-        $this->on(self::EVENT_BEFORE_DELETE, [$this, 'beforeDeleteEvent']);
-        $this->on(self::EVENT_AFTER_FIND, [$this, 'afterFindEvent']);
-    }
-
     /**
      * @inheritdoc
      */
-    public function afterValidateEvent($event)
+    public function afterValidate()
     {
+        parent::afterValidate();
         if($this->visibility == Constants::ARTICLE_VISIBILITY_SECRET){//加密文章需要设置密码
-            if( empty( $event->sender->password ) ){
-                $event->sender->addError('password', Yii::t('app', "Secret article must set a password"));
+            if( empty( $this->password ) ){
+                $this->addError('password', yii::t('app', "Secret article must set a password"));
             }
         }
     }
@@ -53,68 +41,68 @@ class Article extends \common\models\Article
     /**
      * @inheritdoc
      */
-    public function beforeSaveEvent($event)
+    public function beforeSave($insert)
     {
-        $insert = $event->sender->getIsNewRecord();
-        Util::handleModelSingleFileUpload($event->sender, 'thumb', $insert, '@thumb', ['thumbSizes'=>self::$thumbSizes]);
+        Util::handleModelSingleFileUpload($this, 'thumb', $insert, '@thumb', ['thumbSizes'=>self::$thumbSizes]);
         $this->seo_keywords = str_replace('，', ',', $this->seo_keywords);
         if ($insert) {
-            $this->author_id = Yii::$app->getUser()->getIdentity()->getId();
-            $this->author_name = Yii::$app->getUser()->getIdentity()->username;
+            $this->author_id = yii::$app->getUser()->getIdentity()->getId();
+            $this->author_name = yii::$app->getUser()->getIdentity()->username;
         }
+        return parent::beforeSave($insert);
     }
 
     /**
      * @inheritdoc
      */
-    public function afterSaveEvent($event)
+    public function afterSave($insert, $changedAttributes)
     {
         $articleMetaTag = new ArticleMetaTag();
-        $articleMetaTag->setArticleTags($event->sender->id, $event->sender->tag);
-        if ($event->sender->getIsNewRecord()) {
-            $contentModel = yii::createObject( ArticleContent::className() );
-            $contentModel->aid = $event->sender->id;
+        $articleMetaTag->setArticleTags($this->id, $this->tag);
+        if ($insert) {
+            $contentModel = new ArticleContent();
+            $contentModel->aid = $this->id;
         } else {
-            if ($event->sender->content === null) {
+            if ($this->content === null) {
                 return;
             }
-            $contentModel = ArticleContent::findOne(['aid' => $event->sender->id]);
+            $contentModel = ArticleContent::findOne(['aid' => $this->id]);
             if ($contentModel == null) {
-                $contentModel = yii::createObject( ArticleContent::className() );
-                $contentModel->aid = $event->sender->id;
+                $contentModel = new ArticleContent();
+                $contentModel->aid = $this->id;
             }
         }
-        $contentModel->content = $event->sender->content;
+        $contentModel->content = $this->content;
         $contentModel->save();
+        parent::afterSave($insert, $changedAttributes);
     }
 
     /**
      * @inheritdoc
      */
-    public function beforeDeleteEvent($event)
+    public function beforeDelete()
     {
-        if( !empty( $event->sender->thumb ) ){
-            Util::deleteThumbnails(Yii::getAlias('@frontend/web') . $event->sender->thumb, self::$thumbSizes, true);
-        }
         Comment::deleteAll(['aid' => $this->id]);
-        if (($articleContentModel = ArticleContent::find()->where(['aid' => $event->sender->id])->one()) != null) {
+        if (($articleContentModel = ArticleContent::find()->where(['aid' => $this->id])->one()) != null) {
             $articleContentModel->delete();
         }
+        return true;
     }
 
     /**
      * @inheritdoc
      */
-    public function afterFindEvent($event)
+    public function afterFind()
     {
-        $event->sender->tag = call_user_func(function()use($event){
+        parent::afterFind();
+        $this->tag = call_user_func(function(){
             $tags = '';
-            foreach ($event->sender->articleTags as $tag) {
+            foreach ($this->articleTags as $tag) {
                 $tags .= $tag->value . ',';
             }
             return rtrim($tags, ',');
         });
-        $event->sender->content = ArticleContent::findOne(['aid' => $this->id])['content'];
+        $this->content = ArticleContent::findOne(['aid' => $this->id])['content'];
     }
 
 }

@@ -9,7 +9,7 @@
 namespace backend\models\form;
 
 use common\helpers\Util;
-use Yii;
+use yii;
 use common\libs\Constants;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -30,27 +30,20 @@ class BannerForm extends \Common\models\Options
 
     public $desc;
 
-    public function init()
-    {
-        $this->on(self::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_AFTER_FIND, [$this, 'afterFindEvent']);
-    }
-
     /**
      * @inheritdoc
      */
     public function attributeLabels()
     {
         return [
-            'name' => Yii::t('app', 'Sign'),
-            'tips' => Yii::t('app', 'Description'),
-            'img' => Yii::t('app', 'Image'),
-            'target' => Yii::t('app', 'Target'),
-            'link' => Yii::t('app', 'Jump Link'),
-            'sort' => Yii::t('app', 'Sort'),
-            'status' => Yii::t('app', 'Status'),
-            'desc' => Yii::t('app', 'Description'),
+            'name' => yii::t('app', 'Sign'),
+            'tips' => yii::t('app', 'Description'),
+            'img' => yii::t('app', 'Image'),
+            'target' => yii::t('app', 'Target'),
+            'link' => yii::t('app', 'Jump Link'),
+            'sort' => yii::t('app', 'Sort'),
+            'status' => yii::t('app', 'Status'),
+            'desc' => yii::t('app', 'Description'),
         ];
     }
 
@@ -73,8 +66,8 @@ class BannerForm extends \Common\models\Options
 
     public static function findOne($id)
     {
-        if( in_array(Yii::$app->controller->action->id, ['banner-sort', 'banner-delete']) ){//删除,排序
-            $model = parent::findOne(Yii::$app->getRequest()->get('id'));
+        if( in_array(yii::$app->controller->action->id, ['banner-sort', 'banner-delete']) ){//删除,排序
+            $model = parent::findOne(yii::$app->getRequest()->get('id'));
             $model->sign = $id;
             return $model;
         }else{
@@ -87,27 +80,27 @@ class BannerForm extends \Common\models\Options
         return $this->save();
     }
 
-    public function afterFindEvent($event)
+    public function afterFind()
     {
-        if(empty($event->sender->value)) {
-            $event->sender->value = [];
+        if(empty($this->value)) {
+            $this->value = [];
         }else {
-            $temp = json_decode($event->sender->value, true);
+            $temp = json_decode($this->value, true);
             ArrayHelper::multisort($temp, 'sort');
-            $event->sender->value = $temp;
-            $sign = Yii::$app->getRequest()->get('sign', null);
+            $this->value = $temp;
+            $sign = yii::$app->getRequest()->get('sign', null);
             if($sign !== null) {
                 /** @var $cdn \feehi\cdn\TargetAbstract */
-                $cdn = Yii::$app->get('cdn');
-                foreach ($event->sender->value as $value) {
+                $cdn = yii::$app->get('cdn');
+                foreach ($this->value as $value) {
                     if( $sign === $value['sign'] ){
-                        $event->sender->sign = $value['sign'];
-                        $event->sender->img = $cdn->getCdnUrl($value['img']);
-                        $event->sender->target = $value['target'];
-                        $event->sender->desc = $value['desc'];
-                        $event->sender->link = $value['link'];
-                        $event->sender->sort = $value['sort'];
-                        $event->sender->status = $value['status'];
+                        $this->sign = $value['sign'];
+                        $this->img = $cdn->getCdnUrl($value['img']);
+                        $this->target = $value['target'];
+                        $this->desc = $value['desc'];
+                        $this->link = $value['link'];
+                        $this->sort = $value['sort'];
+                        $this->status = $value['status'];
                         break;
                     }
                 }
@@ -120,7 +113,7 @@ class BannerForm extends \Common\models\Options
         $model = parent::findOne(['id'=>$id, 'type'=>self::TYPE_BANNER]);
         if( $model == '' ) throw new NotFoundHttpException("Cannot find id $id");
         /** @var $cdn \feehi\cdn\TargetAbstract */
-        $cdn = Yii::$app->get('cdn');
+        $cdn = yii::$app->get('cdn');
         $models = [];
         foreach ($model->value as $banner){
             $temp = [
@@ -138,39 +131,39 @@ class BannerForm extends \Common\models\Options
         return $models;
     }
 
-    public function beforeSaveEvent($event)
+    public function beforeSave($insert)
     {
-        $sign = Yii::$app->getRequest()->get('sign', null);
-        if( $sign === null && $event->sender->sign ) $sign = $event->sender->sign;//删除
+        $sign = yii::$app->getRequest()->get('sign', null);
+        if( $sign === null && $this->sign ) $sign = $this->sign;//删除
         $options = [];
         $oldFullName = "";
         if( $sign !== null ){//修改
-            foreach ($event->sender->value as $key => $value){
+            foreach ($this->value as $key => $value){
                 if( $value['sign'] === $sign ){
                     $oldFullName = $value['img'];
                 }
             }
-            if( $event->sender->getScenario() === 'delete' ) $options['deleteOldFile'] = true;
+            if( $this->getScenario() === 'delete' ) $options['deleteOldFile'] = true;
         }
-        Util::handleModelSingleFileUploadAbnormal($event->sender, 'img', '@uploads/setting/banner/', $oldFullName, $options);
+        Util::handleModelSingleFileUploadAbnormal($this, 'img', '@uploads/setting/banner/', $oldFullName, $options);
         $data = [
-            'img' => $event->sender->img,
-            'target' => $event->sender->target,
-            'desc' => $event->sender->desc,
-            'link' => $event->sender->link,
-            'sort' => $event->sender->sort,
-            'status' => $event->sender->status,
+            'img' => $this->img,
+            'target' => $this->target,
+            'desc' => $this->desc,
+            'link' => $this->link,
+            'sort' => $this->sort,
+            'status' => $this->status,
         ];
         if( $sign === null ){//新增
             $data['sign'] = uniqid();
-            $temp = $event->sender->value;
+            $temp = $this->value;
             $temp[] = $data;
-            $event->sender->value = $temp;
+            $this->value = $temp;
         }else{
-            $temp = $event->sender->value;
-            foreach ($event->sender->value as $key => $value){
+            $temp = $this->value;
+            foreach ($this->value as $key => $value){
                 if( $value['sign'] === $sign ){
-                    if( $event->sender->getScenario() === 'delete'){
+                    if( $this->getScenario() === 'delete'){
                         unset($temp[$key]);
                     }else {
                         $data['sign'] = $sign;
@@ -178,11 +171,12 @@ class BannerForm extends \Common\models\Options
                     }
                     break;
                 }
-                if( count($event->sender->value) - 1 === $key ) throw new NotFoundHttpException("Id $this->id does not exists sign $sign");
+                if( count($this->value) - 1 === $key ) throw new NotFoundHttpException("Id $this->id does not exists sign $sign");
             }
-            $event->sender->value = $temp;
+            $this->value = $temp;
         }
-        $event->sender->value = json_encode($event->sender->value);
+        $this->value = json_encode($this->value);
+        return parent::beforeSave(false);
     }
 
     public function getBannerType()

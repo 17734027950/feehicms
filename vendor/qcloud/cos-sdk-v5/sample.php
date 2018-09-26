@@ -7,212 +7,90 @@ $cosClient = new Qcloud\Cos\Client(array('region' => getenv('COS_REGION'),
         'appId' => getenv('COS_APPID'),
         'secretId'    => getenv('COS_KEY'),
         'secretKey' => getenv('COS_SECRET'))));
-
-//bucket的命名规则为{name}-{appid} ，此处填写的存储桶名称必须为此格式
-$bucket = 'lewzylu02-1252448703';
-$key = 'a.txt';
-$local_path = "E:/a.txt";
-
-# 上传文件
-## putObject(上传接口，最大支持上传5G文件)
-### 上传内存中的字符串
+#listBuckets
 try {
-    $result = $cosClient->putObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'Body' => 'Hello World!'));
+    $result = $cosClient->listBuckets();
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-### 上传文件流
+
+#createBucket
 try {
-    $result = $cosClient->putObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'Body' => fopen($local_path, 'rb')));
+    $result = $cosClient->createBucket(array('Bucket' => 'testbucket-1252448703'));
     print_r($result);
-} catch (\Exception $e) {
+    } catch (\Exception $e) {
     echo "$e\n";
 }
 
-### 设置header和meta
-try {
-    $result = $cosClient->putObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'Body' => fopen($local_path, 'rb'),
-        'ACL' => 'string',
-        'CacheControl' => 'string',
-        'ContentDisposition' => 'string',
-        'ContentEncoding' => 'string',
-        'ContentLanguage' => 'string',
-        'ContentLength' => integer,
-        'ContentType' => 'string',
-        'Expires' => 'mixed type: string (date format)|int (unix timestamp)|\DateTime',
-        'GrantFullControl' => 'string',
-        'GrantRead' => 'string',
-        'GrantWrite' => 'string',
-        'Metadata' => array(
-            'string' => 'string',
-        ),
-        'StorageClass' => 'string'));
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
 
-## Upload(高级上传接口，默认使用分块上传最大支持50T)
-### 上传内存中的字符串
-try {
-    $result = $cosClient->Upload(
-        $bucket = $bucket,
-        $key = $key,
-        $body = 'Hello World!');
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-### 上传文件流
-try {
-    $result = $cosClient->Upload(
-        $bucket = $bucket,
-        $key = $key,
-        $body = fopen($local_path, 'rb'));
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-### 设置header和meta
+#uploadbigfile
 try {
     $result = $cosClient->upload(
-        $bucket= $bucket,
-        $key = $key,
-        $body = fopen($local_path, 'rb'),
+        $bucket='testbucket-1252448703',
+        $key = '111.txt',
+        $body = str_repeat('a', 5* 1024 * 1024),
         $options = array(
-            'ACL' => 'string',
-            'CacheControl' => 'string',
-            'ContentDisposition' => 'string',
-            'ContentEncoding' => 'string',
-            'ContentLanguage' => 'string',
-            'ContentLength' => integer,
-            'ContentType' => 'string',
-            'Expires' => 'mixed type: string (date format)|int (unix timestamp)|\DateTime',
-            'GrantFullControl' => 'string',
-            'GrantRead' => 'string',
-            'GrantWrite' => 'string',
-            'Metadata' => array(
-                'string' => 'string',
-            ),
-            'StorageClass' => 'string'));
+            "ACL"=>'private',
+            'CacheControl' => 'private',
+            'ServerSideEncryption' => 'AES256'));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## 预签名上传createPresignedUrl
-## 获取带有签名的url
-### 简单上传预签名
+
+#putObject
 try {
-    #此处可以替换为其他上传接口
-    $command = $cosClient->getCommand('putObject', array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'Body' => '' //Body可以任意
+    $result = $cosClient->putObject(array(
+        'Bucket' => 'testbucket-1252448703',
+        'Key' => '11//32//43',
+        'Body' => 'Hello World!',
+        'ServerSideEncryption' => 'AES256'));
+    print_r($result);
+} catch (\Exception $e) {
+    echo "$e\n";
+}
+
+
+#putBucketVersioning
+try {
+    $result = $cosClient->putBucketVersioning(
+    array('Bucket' => 'lewzylu02',
+    'Status' => 'Enabled')
+    );
+    print_r($result);
+} catch (\Exception $e) {
+    echo "$e\n";
+}
+
+
+#getObject
+try {
+    $result = $cosClient->getObject(array(
+        'Bucket' => 'testbucket-1252448703',
+        'Key' => '11',
+        'VersionId' =>'111'));
+} catch (\Exception $e) {
+    echo "$e\n";
+}
+
+#getBucketLocation
+try {
+    $result = $cosClient->getBucketLocation(array(
+    'Bucket' => 'lewzylu02',
     ));
-    $signedUrl = $command->createPresignedUrl('+10 minutes');
-    echo ($signedUrl);
 } catch (\Exception $e) {
     echo "$e\n";
 }
+;
 
-### 分块上传预签名
-try {
-    #此处可以替换为其他上传接口
-    $command = $cosClient->getCommand('uploadPart', array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'UploadId' => $uploadId,
-        'PartNumber' => '1',
-        'Body' => '' //Body可以任意
-    ));
-    $signedUrl = $command->createPresignedUrl('+10 minutes');
-    echo ($signedUrl);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-# 下载文件
-## getObject(下载文件)
-### 下载到内存
-try {
-    $result = $cosClient->getObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key));
-    echo($result['Body']);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-### 下载到本地
-try {
-    $result = $cosClient->getObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'SaveAs' => $local_path));
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-### 指定下载范围
-/*
- * Range 字段格式为 'bytes=a-b'
- */
-try {
-    $result = $cosClient->getObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'Range' => 'bytes=0-10',
-        'SaveAs' => $local_path));
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-### 设置返回header
-try {
-    $result = $cosClient->getObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
-        'ResponseCacheControl' => 'string',
-        'ResponseContentDisposition' => 'string',
-        'ResponseContentEncoding' => 'string',
-        'ResponseContentLanguage' => 'string',
-        'ResponseContentType' => 'string',
-        'ResponseExpires' => 'mixed type: string (date format)|int (unix timestamp)|\DateTime',
-        'SaveAs' => $local_path));
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-## getObjectUrl(获取文件UrL)
-try {
-    $signedUrl = $cosClient->getObjectUrl($bucket, $key, '+10 minutes');
-    echo ($signedUrl);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-# 删除object
-## deleteObject
+#deleteObject
 try {
     $result = $cosClient->deleteObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
+        'Bucket' => 'testbucket-1252448703',
+        'Key' => '111.txt',
         'VersionId' => 'string'));
     print_r($result);
 } catch (\Exception $e) {
@@ -220,14 +98,16 @@ try {
 }
 
 
-# 删除多个object
-## deleteObjects
+#deleteObjects
 try {
     $result = $cosClient->deleteObjects(array(
+        // Bucket is required
         'Bucket' => 'string',
+        // Objects is required
         'Objects' => array(
             array(
-                'Key' => $key,
+                // Key is required
+                'Key' => 'string',
                 'VersionId' => 'string',
             ),
             // ... repeated
@@ -239,14 +119,20 @@ try {
 }
 
 
-# 获取object信息
-## headObject
-/*
- * 可代替isObjectExist接口，查询object是否存在
- */
+#deleteBucket
+try {
+    $result = $cosClient->deleteBucket(array(
+        'Bucket' => 'testbucket-1252448703'));
+    print_r($result);
+} catch (\Exception $e) {
+    echo "$e\n";
+}
+
+
+#headObject
 try {
     $result = $cosClient->headObject(array(
-        'Bucket' => $bucket,
+        'Bucket' => 'testbucket-1252448703',
         'Key' => '11',
         'VersionId' =>'111',
         'ServerSideEncryption' => 'AES256'));
@@ -255,132 +141,76 @@ try {
     echo "$e\n";
 }
 
-
-# 获取bucket列表
-## listBuckets
-try {
-    $result = $cosClient->listBuckets();
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-# 创建bucket
-## createBucket
-try {
-    $result = $cosClient->createBucket(array('Bucket' => $bucket));
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-# 删除bucket
-## deleteBucket
-try {
-    $result = $cosClient->deleteBucket(array(
-        'Bucket' => $bucket));
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-# 获取bucket信息
-## headBucket
-/*
- * 可代替isBucketExist接口，查询bucket是否存在
- */
+#headBucket
 try {
     $result = $cosClient->headBucket(array(
-        'Bucket' => $bucket));
+        'Bucket' => 'testbucket-1252448703'));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
 
-# 列出bucket下的object
-## listObjects
-### 列出所有object
-/*
- * 该接口一次最多列出1000个，需要列出所有请参考其他服务中的清空并删除bucket接口
- */
+#listObjects
 try {
-    $result = $cosClient->listObjects(array(
-        'Bucket' => $bucket));
-    foreach ($result['Contents'] as $rt){
-        print_r($rt);
-    }
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-### 列出带有前缀的object
-try {
-    $result = $cosClient->listObjects(array(
-        'Bucket' => $bucket,
-        'Prefix' => 'string'));
-    foreach ($result['Contents'] as $rt){
-        print_r($rt);
-    }
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-# 获取bucket地域
-## getBucketLocation
-try {
-    $result = $cosClient->getBucketLocation(array(
-        'Bucket' => 'lewzylu02',
-    ));
-} catch (\Exception $e) {
-    echo "$e\n";
-};
-
-
-# 多版本相关
-## putBucketVersioning(开启关闭某个bucket的多版本)
-try {
-    $result = $cosClient->putBucketVersioning(
-        array('Bucket' => $bucket,
-            'Status' => 'Enabled'));
+    $result = $cosClient->headObject(array(
+        'Bucket' => 'testbucket-1252448703',
+        'Key' => '11'));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## ListObjectVersions(列出多版本object)
-/*
- * 同名文件会出现多个版本
- */
+#ListObjectVersions
 try {
     $result = $cosClient->ListObjectVersions(
-        array('Bucket' => $bucket,
-            'Prefix'=>'string')
+        array('Bucket' => 'lewzylu02',
+            'Prefix'=>'test1G')
     );
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## getBucketVersioning(获取某个bucket多版本属性)
+
+#listObjects
+try {
+    $result = $cosClient->listObjects(array(
+        'Bucket' => 'testbucket-1252448703'));
+    print_r($result);
+} catch (\Exception $e) {
+    echo "$e\n";
+}
+
+#getBucketVersioning
 try {
     $result = $cosClient->getBucketVersioning(
-        array('Bucket' => $bucket));
+        array('Bucket' => 'lewzylu02',)
+    );
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
 
-# ACL相关
-## putBucketACL(设置bucketACL)
+#getObjectUrl
+try {
+    $bucket =  'testbucket-1252448703';
+    $key = 'hello.txt';
+    $url = "/{$key}";
+    $request = $cosClient->get($url);
+    $signedUrl = $cosClient->getObjectUrl($bucket, $key, '+10 minutes');
+    echo ($signedUrl);
+
+} catch (\Exception $e) {
+    echo "$e\n";
+}
+
+
+#putBucketACL
 try {
     $result = $cosClient->PutBucketAcl(array(
-        'Bucket' => $bucket,
+        'Bucket' => 'testbucket-1252448703',
         'Grants' => array(
             array(
                 'Grantee' => array(
@@ -401,20 +231,21 @@ try {
     echo "$e\n";
 }
 
-## getBucketACL(获取bucketACL)
+
+#getBucketACL
 try {
     $result = $cosClient->GetBucketAcl(array(
-        'Bucket' => $bucket,));
+        'Bucket' => 'testbucket-1252448703',));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## putObjectACL(设置objectACL)
+
+#putObjectACL
 try {
-    $result = $cosClient->putObjectACL(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
+    $result = $cosClient->PutBucketAcl(array(
+        'Bucket' => 'testbucket-1252448703',
         'Grants' => array(
             array(
                 'Grantee' => array(
@@ -435,22 +266,24 @@ try {
     echo "$e\n";
 }
 
-## getObjectACL(获取objectACL)
+
+#getObjectACL
 try {
-    $result = $cosClient->GetObjectAcl(array(
-        'Bucket' => $bucket,
-        'Key' => $key,));
+    $result = $cosClient->getObjectAcl(array(
+        'Bucket' => 'testbucket-1252448703',
+        'Key' => '11'));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
 
-# 生命周期相关
-## putBucketLifecycle(设置bucket生命周期)
+#putBucketLifecycle
 try {
     $result = $cosClient->putBucketLifecycle(array(
-        'Bucket' => $bucket,
+        // Bucket is required
+        'Bucket' => 'lewzylu06-1252448703',
+        // Rules is required
         'Rules' => array(
             array(
                 'Expiration' => array(
@@ -460,12 +293,14 @@ try {
                 'Filter' => array(
                     'Prefix' => 'documents/'
                 ),
+                // Status is required
                 'Status' => 'Enabled',
                 'Transitions' => array(
                     array(
                         'Days' => 200,
                         'StorageClass' => 'NEARLINE'),
                 ),
+                // ... repeated
             ),
         )));
     print_r($result);
@@ -473,20 +308,24 @@ try {
     echo "$e\n";
 }
 
-## getBucketLifecycle(获取bucket生命周期)
+
+#getBucketLifecycle
 try {
     $result = $cosClient->getBucketLifecycle(array(
-        'Bucket' =>$bucket,
+        // Bucket is required
+        'Bucket' =>'testbucket-1252448703',
     ));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## deleteBucketLifecycle(删除bucket生命周期)
+
+#deleteBucketLifecycle
 try {
     $result = $cosClient->deleteBucketLifecycle(array(
-        'Bucket' =>$bucket,
+        // Bucket is required
+        'Bucket' =>'testbucket-1252448703',
     ));
     print_r($result);
 } catch (\Exception $e) {
@@ -494,18 +333,22 @@ try {
 }
 
 
-# 跨域相关
-## putBucketCors(设置bucket跨域)
+#putBucketCors
 try {
     $result = $cosClient->putBucketCors(array(
-        'Bucket' => $bucket,
+        // Bucket is required
+        'Bucket' => 'testbucket-1252448703',
+        // CORSRules is required
         'CORSRules' => array(
             array(
                 'ID' => '1234',
                 'AllowedHeaders' => array('*'),
+                // AllowedMethods is required
                 'AllowedMethods' => array('PUT'),
+                // AllowedOrigins is required
                 'AllowedOrigins' => array('http://www.qq.com', ),
             ),
+            // ... repeated
         ),
     ));
     print_r($result);
@@ -513,62 +356,66 @@ try {
     echo "$e\n";
 }
 
-## getBucketCors(获取bucket跨域信息)
+
+#getBucketCors
 try {
     $result = $cosClient->getBucketCors(array(
+        // Bucket is required
+        'Bucket' => 'testbucket-1252448703',
     ));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## deleteBucketCors(删除bucket跨域)
+
+#deleteBucketCors
 try {
     $result = $cosClient->deleteBucketCors(array(
         // Bucket is required
-        'Bucket' => $bucket,
+        'Bucket' => 'testbucket-1252448703',
     ));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-# 复制
-## copyobject(简单复制)
-/*
- * 将{bucket},{region},{cos_path},{versionId}替换成复制源的真实信息
- */
+
+#copyobject
 try {
     $result = $cosClient->copyObject(array(
-        'Bucket' => $bucket,
-        'CopySource' => '{bucket}.cos.{region}.myqcloud.com/{cos_path}?versionId={versionId}',
+        // Bucket is required
+        'Bucket' => 'lewzylu01-1252448703',
+        // CopySource is required
+        'CopySource' => 'lewzylu02-1252448703.cos.ap-guangzhou.myqcloud.com/test1G?versionId=MTg0NDY3NDI1NTk0MzUwNDQ1OTg',
+        // Key is required
         'Key' => 'string',
+        'ServerSideEncryption' => 'AES256'
     ));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
 
-## Copy(分块并发复制)
-/*
- * 将{bucket},{region},{cos_path},{versionId}替换成复制源的真实信息
- */
+
+#Copy
 try {
-    $result = $cosClient->Copy($bucket = $bucket,
-        $key = $key,
-        $copysource = '{bucket}.cos.{region}.myqcloud.com/{cos_path}',
-        $options = array('VersionId'=>'{versionId}'));
+    $result = $cosClient->Copy($bucket = 'lewzylu01-1252448703',
+        $key = 'string',
+        $copysource = 'lewzylu02-1252448703.cos.ap-guangzhou.myqcloud.com/test1G',
+        $options = array('VersionId'=>'MTg0NDY3NDI1NTk0MzUwNDQ1OTg',
+            'ServerSideEncryption' => 'AES256'));
     print_r($result);
 } catch (\Exception $e) {
     echo "$e\n";
 }
-
-# 恢复归档文件
-## restoreObject
+#restoreObject
 try {
     $result = $cosClient->restoreObject(array(
-        'Bucket' => $bucket,
-        'Key' => $key,
+        // Bucket is required
+        'Bucket' => 'lewzylu02',
+        // Objects is required
+        'Key' => '11',
         'Days' => 7,
         'CASJobParameters' => array(
             'Tier' =>'Bulk'
@@ -579,110 +426,3 @@ try {
     echo "$e\n";
 }
 
-# 其他服务
-## 列出某bucket下所有的object
-try {
-    $prefix='';
-    $marker='';
-    while(True){
-        $result = $cosClient->ListObjects(
-            array('Bucket' => $bucket,
-                'Marker' => $marker,
-                'MaxKeys' => 1000));
-        foreach ($result['Contents'] as $rt) {
-            print_r($rt['Key']." ");
-            /*
-             * 使用下面的代码可以删除全部object
-             */
-//            try {
-//                $result = $cosClient->deleteobjects(array(
-//                    'Bucket' => $bucket,
-//                    'Key' => $rt['Key']));
-//                print_r($result);
-//            } catch (\Exception $e) {
-//                echo "$e\n";
-//            }
-        }
-        $marker = $result['NextMarker'];
-        if (!$result['IsTruncated']){
-            break;
-        }
-    }
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-## 删除所有因上传失败而产生的分块
-/*
- * 可以清理掉因分块上传失败
- */
-try {
-    while(True){
-        $result = $cosClient->ListMultipartUploads(
-            array('Bucket' => $bucket,
-                'Prefix' => ''));
-        if (count($result['Uploads']) == 0){
-            break;
-        }
-        foreach ($result['Uploads'] as $upload) {
-            try {
-                $rt = $cosClient->AbortMultipartUpload(
-                    array('Bucket' => $bucket,
-                        'Key' => $upload['Key'],
-                        'UploadId' => $upload['UploadId']));
-                print_r($rt);
-            } catch (\Exception $e) {
-                print_r($e);
-            }
-        }
-    }
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-## 分块上传断点重传
-/*
- * 仅适用于分块上传失败的情况
- * 需要填写上传失败的uploadId
- */
-try {
-    $result = $cosClient->resumeUpload(
-        $bucket = $bucket,
-        $key = $key,
-        $body = fopen("E:/test.txt",'rb'),
-        $uploadId = '152448808231afdf221eb558ab15d1e455d2afd025c5663936142fdf5614ebf6d1668e2eda');
-    print_r($result);
-} catch (\Exception $e) {
-    echo "$e\n";
-}
-
-
-## 删除某些前缀的空bucket
-function startsWith($haystack, $needle)
-{
-    $length = strlen($needle);
-    return (substr($haystack, 0, $length) === $needle);
-}
-
-try {
-    $result = $cosClient->listBuckets();
-    foreach ($result['Buckets'] as $bucket){
-        $region = $bucket['Location'];
-        $name = $bucket['Name'];
-        if (startsWith($name,'lewzylu')){
-            try {
-                $cosClient2 = new Qcloud\Cos\Client(array('region' => $region,
-                    'credentials'=> array(
-                        'secretId'    => getenv('COS_KEY'),
-                        'secretKey' => getenv('COS_SECRET'))));
-                $rt = $cosClient2->deleteBucket(array('Bucket' => $name));
-                print_r($rt);
-            }catch (\Exception $e) {
-            }
-        }
-
-
-    }
-} catch (\Exception $e) {
-    echo "$e\n";
-}

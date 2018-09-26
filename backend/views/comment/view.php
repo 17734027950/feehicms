@@ -5,7 +5,6 @@
  * Email: job@feehi.com
  * Created at: 2018-02-24 22:33
  */
-
 use common\libs\Constants;
 use yii\widgets\DetailView;
 
@@ -17,7 +16,7 @@ use yii\widgets\DetailView;
         'id',
         'aid',
         [
-            'label' => Yii::t('app', 'Article Title'),
+            'label' => yii::t('app', 'Article Title'),
             'attribute' => 'aid',
             'value' => function($model){
                 return $model->article->title;

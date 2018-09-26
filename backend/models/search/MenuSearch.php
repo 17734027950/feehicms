@@ -8,7 +8,6 @@
 
 namespace backend\models\search;
 
-use Yii;
 use yii\data\ArrayDataProvider;
 use backend\models\Menu;
 
@@ -28,8 +27,7 @@ class MenuSearch extends Menu
 
     /**
      * @param $params
-     * @return ArrayDataProvider
-     * @throws \yii\base\InvalidConfigException
+     * @return \yii\data\ArrayDataProvider
      */
     public function search($params)
     {
@@ -55,9 +53,7 @@ class MenuSearch extends Menu
                 }
             }
         }
-        /** @var ArrayDataProvider $dataProvider */
-        $dataProvider = Yii::createObject([
-            'class' => ArrayDataProvider::className(),
+        $dataProvider = new ArrayDataProvider([
             'allModels' => $query,
             'pagination' => [
                 'pageSize' => -1,

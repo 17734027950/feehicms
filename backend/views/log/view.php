@@ -5,7 +5,6 @@
  * Email: job@feehi.com
  * Created at: 2016-04-14 10:09
  */
-
 use yii\widgets\DetailView;
 
 /**

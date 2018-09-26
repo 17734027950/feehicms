@@ -8,7 +8,7 @@
 
 namespace backend\actions;
 
-use Yii;
+use yii;
 use yii\web\BadRequestHttpException;
 use yii\web\UnprocessableEntityHttpException;
 
@@ -40,19 +40,19 @@ class UpdateAction extends \yii\base\Action
      */
     public function run()
     {
-        $id = Yii::$app->getRequest()->get($this->paramSign, null);
-        if (! $id) throw new BadRequestHttpException(Yii::t('app', "{$this->paramSign} doesn't exist"));
-        /* @var $model \yii\db\ActiveRecord */
+        $id = yii::$app->getRequest()->get($this->paramSign, null);
+        if (! $id) throw new BadRequestHttpException(yii::t('app', "{$this->paramSign} doesn't exist"));
+        /* @var $model yii\db\ActiveRecord */
         $model = call_user_func([$this->modelClass, 'findOne'], $id);
-        if (! $model) throw new BadRequestHttpException(Yii::t('app', "Cannot find model by $id"));
+        if (! $model) throw new BadRequestHttpException(yii::t('app', "Cannot find model by $id"));
         $model->setScenario( $this->scenario );
 
-        if (Yii::$app->getRequest()->getIsPost()) {
+        if (yii::$app->getRequest()->getIsPost()) {
             if ($model->load(Yii::$app->getRequest()->post()) && $model->save()) {
-                if( Yii::$app->getRequest()->getIsAjax() ){
+                if( yii::$app->getRequest()->getIsAjax() ){
                     return [];
                 }else {
-                    Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Success'));
+                    yii::$app->getSession()->setFlash('success', yii::t('app', 'Success'));
                     if( $this->successRedirect ) return $this->controller->redirect($this->successRedirect);
                     return $this->controller->refresh();
                 }
@@ -62,10 +62,10 @@ class UpdateAction extends \yii\base\Action
                 foreach ($errors as $v) {
                     $err .= $v[0] . '<br>';
                 }
-                if( Yii::$app->getRequest()->getIsAjax() ){
+                if( yii::$app->getRequest()->getIsAjax() ){
                     throw new UnprocessableEntityHttpException($err);
                 }else {
-                    Yii::$app->getSession()->setFlash('error', $err);
+                    yii::$app->getSession()->setFlash('error', $err);
                 }
                 $model = call_user_func([$this->modelClass, 'findOne'], $id);
             }

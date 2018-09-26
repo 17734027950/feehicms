@@ -14,6 +14,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
 
+;
 
 /**
  * This is the model class for table "{{%category}}".
@@ -29,14 +30,6 @@ use yii\helpers\FileHelper;
  */
 class Category extends \yii\db\ActiveRecord
 {
-
-    public function init()
-    {
-        parent::init();
-        $this->on(self::EVENT_BEFORE_DELETE, [$this, 'beforeDeleteEvent']);
-        $this->on(self::EVENT_AFTER_VALIDATE, [$this, 'afterValidateEvent']);
-    }
-
     /**
      * @inheritdoc
      */
@@ -62,7 +55,7 @@ class Category extends \yii\db\ActiveRecord
             [['sort'], 'compare', 'compareValue' => 0, 'operator' => '>='],
             [['parent_id'], 'default', 'value' => 0],
             [['name', 'alias', 'remark'], 'string', 'max' => 255],
-            [['alias'],  'match', 'pattern' => '/^[a-zA-Z0-9_]+$/', 'message' => Yii::t('app', 'Only includes alphabet,_,and number')],
+            [['alias'],  'match', 'pattern' => '/^[a-zA-Z0-9_]+$/', 'message' => yii::t('app', 'Only includes alphabet,_,and number')],
             [['name', 'alias'], 'required'],
         ];
     }
@@ -172,36 +165,37 @@ class Category extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function beforeDeleteEvent($event)
+    public function beforeDelete()
     {
         $categories = self::find()->orderBy("sort asc,parent_id asc")->asArray()->all();
         $familyTree = new FamilyTree( $categories );
-        $subs = $familyTree->getDescendants($event->sender->id);
+        $subs = $familyTree->getDescendants($this->id);
         if (! empty($subs)) {
-            $event->sender->addError('id', Yii::t('app', 'Allowed not to be deleted, sub level exsited.'));
-            $event->isValid = false;
+            $this->addError('id', yii::t('app', 'Allowed not to be deleted, sub level exsited.'));
+            return false;
         }
-        if (Article::findOne(['cid' => $event->sender->id]) != null) {
-            $event->sender->addError('id', Yii::t('app', 'Allowed not to be deleted, some article belongs to this category.'));
-            $event->isValid = false;
+        if (Article::findOne(['cid' => $this->id]) != null) {
+            $this->addError('id', yii::t('app', 'Allowed not to be deleted, some article belongs to this category.'));
+            return false;
         }
+        return parent::beforeDelete();
     }
 
     /**
      * @inheritdoc
      */
-    public function afterValidateEvent($event)
+    public function afterValidate()
     {
-        if (! $event->sender->getIsNewRecord() ) {
-            if( $event->sender->id == $event->sender->parent_id ) {
-                $event->sender->addError('parent_id', Yii::t('app', 'Cannot be themselves sub'));
+        if (! $this->getIsNewRecord() ) {
+            if( $this->id == $this->parent_id ) {
+                $this->addError('parent_id', yii::t('app', 'Cannot be themself sub.'));
                 return false;
             }
             $familyTree = new FamilyTree(self::_getCategories());
-            $descendants = $familyTree->getDescendants($event->sender->id);
+            $descendants = $familyTree->getDescendants($this->id);
             $descendants = ArrayHelper::getColumn($descendants, 'id');
-            if( in_array($event->sender->parent_id, $descendants) ){
-                $event->sender->addError('parent_id', Yii::t('app', 'Cannot be themselves descendants sub'));
+            if( in_array($this->parent_id, $descendants) ){
+                $this->addError('parent_id', yii::t('app', 'Cannot be themselves descendants sub'));
                 return false;
             }
         }
@@ -231,14 +225,14 @@ class Category extends \yii\db\ActiveRecord
             $data[$url] = 'article/index';
         }
         $json = json_encode($data);
-        $path = Yii::getAlias('@frontend/runtime/cache');
+        $path = yii::getAlias('@frontend/runtime/cache');
         if( !file_exists($path) ) FileHelper::createDirectory($path);
         file_put_contents($path . '/category.txt', $json);
     }
 
     public static function getUrlRules()
     {
-        $file = Yii::getAlias('@frontend/runtime/cache/category.txt');
+        $file = yii::getAlias('@frontend/runtime/cache/category.txt');
         if( !file_exists($file) ){
             self::_generateUrlRules();
         }

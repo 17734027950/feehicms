@@ -108,6 +108,7 @@ final class UploadManager
                 $this->config,
                 $params,
                 $mime,
+                $checkCrc,
                 basename($filePath)
             );
         }

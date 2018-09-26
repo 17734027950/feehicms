@@ -8,7 +8,7 @@
 
 namespace backend\controllers;
 
-use Yii;
+use yii;
 use backend\models\Article;
 use backend\models\search\ArticleSearch;
 use backend\actions\CreateAction;
@@ -27,9 +27,8 @@ class ArticleController extends \yii\web\Controller
             'index' => [
                 'class' => IndexAction::className(),
                 'data' => function(){
-                    /** @var $searchModel ArticleSearch */
-                    $searchModel = Yii::createObject( ArticleSearch::className() );
-                    $dataProvider = $searchModel->search( Yii::$app->getRequest()->getQueryParams() );
+                    $searchModel = new ArticleSearch();
+                    $dataProvider = $searchModel->search(yii::$app->getRequest()->getQueryParams());
                     return [
                         'dataProvider' => $dataProvider,
                         'searchModel' => $searchModel,

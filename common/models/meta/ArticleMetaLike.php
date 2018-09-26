@@ -8,7 +8,7 @@
 
 namespace common\models\meta;
 
-use Yii;
+use yii;
 
 class ArticleMetaLike extends \common\models\ArticleMeta
 {
@@ -24,7 +24,7 @@ class ArticleMetaLike extends \common\models\ArticleMeta
     {
         $this->aid = $aid;
         $this->key = $this->keyName;
-        $this->value = Yii::$app->getRequest()->getUserIP();
+        $this->value = yii::$app->getRequest()->getUserIP();
         return $this->save(false);
     }
 

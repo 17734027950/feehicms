@@ -22,7 +22,7 @@ use backend\grid\ActionColumn;
 use backend\models\User;
 
 $assignment = function ($url, $model) {
-    return Html::a('<i class="fa fa-tablet"></i> ' . Yii::t('app', 'Assign Roles'), Url::to([
+    return Html::a('<i class="fa fa-tablet"></i> ' . yii::t('app', 'Assign Roles'), Url::to([
         'assign',
         'uid' => $model['id']
     ]), [
@@ -32,7 +32,7 @@ $assignment = function ($url, $model) {
 };
 
 $this->title = "Admin Users";
-$this->params['breadcrumbs'][] = Yii::t('app', 'Admin Users');
+$this->params['breadcrumbs'][] = yii::t('app', 'Admin Users');
 ?>
 <div class="row">
     <div class="col-sm-12">
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Admin Users');
                         ],
                         [
                             'attribute' => 'role',
-                            'label' => Yii::t('app', 'Role'),
+                            'label' => yii::t('app', 'Role'),
                             'value' => function ($model) {
                                 /** @var $model backend\models\User */
                                 return $model->getRolesNameString();
@@ -66,12 +66,12 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Admin Users');
                         ],
                         [
                             'attribute' => 'status',
-                            'label' => Yii::t('app', 'Status'),
+                            'label' => yii::t('app', 'Status'),
                             'value' => function ($model) {
                                 if($model->status == User::STATUS_ACTIVE){
-                                    return Yii::t('app', 'Normal');
+                                    return yii::t('app', 'Normal');
                                 }else if( $model->status == User::STATUS_DELETED ){
-                                    return Yii::t('app', 'Disabled');
+                                    return yii::t('app', 'Disabled');
                                 }
                             },
                             'filter' => User::getStatuses(),

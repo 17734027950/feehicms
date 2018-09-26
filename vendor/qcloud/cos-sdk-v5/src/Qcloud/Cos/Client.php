@@ -12,7 +12,7 @@ use Qcloud\Cos\Signature;
 use Qcloud\Cos\TokenListener;
 
 class Client extends GSClient {
-    const VERSION = '1.2.3';
+    const VERSION = '1.1.4';
 
     private $region;       // string: region.
     private $credentials;
@@ -35,7 +35,7 @@ class Client extends GSClient {
                         'bj'=>'ap-beijing',
                         'sh'=>'ap-shanghai',
                         'gz'=>'ap-guangzhou',
-                        'cd'=>'ap-chengdu',
+                        'cd'=>'	ap-chengdu',
                         'sgp'=>'ap-singapore',);
         if (array_key_exists($this->region,$regionmap))
         {
@@ -56,7 +56,7 @@ class Client extends GSClient {
 
         $desc = ServiceDescription::factory(Service::getService());
         $this->setDescription($desc);
-        $this->setUserAgent('cos-php-sdk-v5./' . Client::VERSION, true);
+        $this->setUserAgent('cos-php-sdk-v5/' . Client::VERSION, true);
 
         $this->addSubscriber(new ExceptionListener());
         $this->addSubscriber(new Md5Listener($this->signature));
@@ -81,7 +81,7 @@ class Client extends GSClient {
                 . '$client->get(), $client->head(), $client->post(), $client->put(), etc. methods when passing in a '
                 . 'request object');
         }
-        return $this->signature->createPresignedUrl($request, $expires);
+        return $this->signature->createPresignedUrl($request, $this->credentials, $expires);
     }
     public function getObjectUrl($bucket, $key, $expires = null, array $args = array())
     {
@@ -96,7 +96,7 @@ class Client extends GSClient {
 
         return $expires ? $this->createPresignedUrl($request, $expires) : $request->getUrl();
     }
-    public function Upload($bucket, $key, $body, $options = array()) {
+    public function upload($bucket, $key, $body, $options = array()) {
         $body = EntityBody::factory($body);
         $options = Collection::fromConfig(array_change_key_case($options), array(
             'min_part_size' => MultipartUpload::MIN_PART_SIZE,
@@ -120,27 +120,12 @@ class Client extends GSClient {
                 ) + $options['params']);
 
             $rt = $multipartUpload->performUploading();
+
         }
         return $rt;
+
     }
-
-    public function resumeUpload($bucket, $key, $body, $uploadId, $options = array()) {
-        $body = EntityBody::factory($body);
-        $options = Collection::fromConfig(array_change_key_case($options), array(
-            'min_part_size' => MultipartUpload::MIN_PART_SIZE,
-            'params'        => $options));
-        $multipartUpload = new MultipartUpload($this, $body, $options['min_part_size'], array(
-                'Bucket' => $bucket,
-                'Key' => $key,
-                'Body' => $body,
-                'UploadId' => $uploadId,
-            ) + $options['params']);
-
-        $rt = $multipartUpload->resumeUploading();
-        return $rt;
-    }
-
-    public function Copy($bucket, $key, $copysource, $options = array()) {
+    public function copy($bucket, $key, $copysource, $options = array()) {
 
     $options = Collection::fromConfig(array_change_key_case($options), array(
         'min_part_size' => Copy::MIN_PART_SIZE,

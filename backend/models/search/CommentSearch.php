@@ -11,7 +11,6 @@ namespace backend\models\search;
 use backend\behaviors\TimeSearchBehavior;
 use backend\components\search\SearchEvent;
 use backend\models\Article;
-use Yii;
 use yii\data\ActiveDataProvider;
 
 class CommentSearch extends \common\models\Comment
@@ -39,15 +38,12 @@ class CommentSearch extends \common\models\Comment
 
     /**
      * @param $params
-     * @return ActiveDataProvider
-     * @throws \yii\base\InvalidConfigException
+     * @return \yii\data\ActiveDataProvider
      */
     public function search($params)
     {
         $query = self::find()->with('article');
-        /** @var ActiveDataProvider $dataProvider */
-        $dataProvider = Yii::createObject([
-            'class' => ActiveDataProvider::className(),
+        $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
@@ -79,7 +75,7 @@ class CommentSearch extends \common\models\Comment
             $query->andFilterWhere(['aid' => $aidArray]);
         }
 
-        $this->trigger(SearchEvent::BEFORE_SEARCH, Yii::createObject(['class' => SearchEvent::className(), 'query'=>$query]));
+        $this->trigger(SearchEvent::BEFORE_SEARCH, new SearchEvent(['query'=>$query]));
         return $dataProvider;
     }
 }

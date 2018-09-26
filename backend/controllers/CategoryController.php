@@ -9,7 +9,6 @@
 namespace backend\controllers;
 
 use backend\actions\ViewAction;
-use Yii;
 use yii\data\ArrayDataProvider;
 use common\models\Category;
 use backend\actions\CreateAction;
@@ -28,8 +27,7 @@ class CategoryController extends \yii\web\Controller
                 'class' => IndexAction::className(),
                 'data' => function(){
                     $data = Category::getCategories();
-                    $dataProvider = Yii::createObject([
-                        'class' => ArrayDataProvider::className(),
+                    $dataProvider = new ArrayDataProvider([
                         'allModels' => $data,
                         'pagination' => [
                             'pageSize' => -1

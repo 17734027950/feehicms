@@ -21,7 +21,7 @@ use backend\grid\CheckboxColumn;
 use backend\grid\ActionColumn;
 
 $this->title = "Category";
-$this->params['breadcrumbs'][] = Yii::t('app', 'Category');
+$this->params['breadcrumbs'][] = yii::t('app', 'Category');
 ?>
 <div class="row">
     <div class="col-sm-12">
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Category');
                         ],
                         [
                             'attribute' => 'name',
-                            'label' => Yii::t('app', 'Name'),
+                            'label' => yii::t('app', 'Name'),
                             'format' => 'html',
                             'value' => function ($model, $key, $index, $column) {
                                 return str_repeat('--', $model['level']) . $model['name'];
@@ -48,20 +48,20 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Category');
                         ],
                         [
                             'attribute' => 'alias',
-                            'label' => Yii::t('app', 'Alias'),
+                            'label' => yii::t('app', 'Alias'),
                         ],
                         [
                             'class' => SortColumn::className(),
-                            'label' => Yii::t('app', 'Sort')
+                            'label' => yii::t('app', 'Sort')
                         ],
                         [
                             'class' => DateColumn::className(),
-                            'label' => Yii::t('app', 'Created At'),
+                            'label' => yii::t('app', 'Created At'),
                             'attribute' => 'created_at',
                         ],
                         [
                             'class' => DateColumn::className(),
-                            'label' => Yii::t('app', 'Updated At'),
+                            'label' => yii::t('app', 'Updated At'),
                             'attribute' => 'updated_at',
                         ],
                         [

@@ -8,7 +8,7 @@
 
 namespace backend\models\search;
 
-use Yii;
+
 use yii\data\ArrayDataProvider;
 use backend\models\form\Rbac;
 
@@ -38,8 +38,7 @@ class RbacSearch extends Rbac
                 }
             }
         }
-        $dataProvider = Yii::createObject([
-            'class' => ArrayDataProvider::className(),
+        $dataProvider = new ArrayDataProvider([
             'allModels' => $array,
             'pagination' => [
                 'pageSize' => -1,
@@ -72,8 +71,7 @@ class RbacSearch extends Rbac
                 }
             }
         }
-        $dataProvider = Yii::createObject([
-            'class' => ArrayDataProvider::className(),
+        $dataProvider = new ArrayDataProvider([
             'allModels' => $array,
             'pagination' => [
                 'pageSize' => -1,

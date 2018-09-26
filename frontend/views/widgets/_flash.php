@@ -9,7 +9,7 @@
 use common\widgets\JsBlock;
 
 if (Yii::$app->getSession()->hasFlash('success')) {
-    $successTitle = Yii::t('app', 'Success');
+    $successTitle = yii::t('app', 'Success');
     $info = Yii::$app->getSession()->getFlash('success');
     $str = <<<EOF
        toastr.options = {
@@ -33,7 +33,7 @@ EOF;
     JsBlock::end();
 }
 if (Yii::$app->getSession()->hasFlash('error')) {
-    $errorTitle = Yii::t('app', 'Error');
+    $errorTitle = yii::t('app', 'Error');
     $info = Yii::$app->getSession()->getFlash('error');
     $str = <<<EOF
        toastr.options = {

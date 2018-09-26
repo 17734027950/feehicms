@@ -5,11 +5,10 @@
  * Email: job@feehi.com
  * Created at: 2017-09-04 22:59
  */
-
 namespace frontend\models\form;
 
 use frontend\models\Article;
-use Yii;
+use yii;
 
 class ArticlePasswordForm extends \yii\base\Model
 {
@@ -25,18 +24,18 @@ class ArticlePasswordForm extends \yii\base\Model
     public function attributeLabels()
     {
         return [
-            "password" => Yii::t('app', 'Password'),
+            "password" => yii::t('app', 'Password'),
         ];
     }
 
     public function checkPassword($id)
     {
         if( $this->password == Article::findOne($id)['password'] ){
-            $session = Yii::$app->getSession();
+            $session = yii::$app->getSession();
             $session->set("article_password_" . $id, true);
             return true;
         }
-        $this->addError('password', Yii::t('frontend', 'Password error'));
+        $this->addError('password', yii::t('frontend', 'Password error'));
         return false;
     }
 }

@@ -9,7 +9,7 @@
 namespace backend\controllers;
 
 use backend\actions\ViewAction;
-use Yii;
+use yii;
 use backend\models\Menu;
 use backend\models\search\MenuSearch;
 use backend\actions\CreateAction;
@@ -30,12 +30,8 @@ class MenuController extends \yii\web\Controller
             'index' => [
                 'class' => IndexAction::className(),
                 'data' => function(){
-                    /** @var MenuSearch $searchModel */
-                    $searchModel = Yii::createObject([
-                        'class' => MenuSearch::className(),
-                        'scenario' => 'backend'
-                    ]);
-                    $dataProvider = $searchModel->search( Yii::$app->getRequest()->getQueryParams() );
+                    $searchModel = new MenuSearch(['scenario' => 'backend']);
+                    $dataProvider = $searchModel->search(yii::$app->getRequest()->getQueryParams());
                     $data = [
                         'dataProvider' => $dataProvider,
                         'searchModel' => $searchModel,

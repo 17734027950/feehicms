@@ -5,12 +5,11 @@
  * Email: job@feehi.com
  * Created at: 2016-03-23 15:47
  */
-
 use yii\helpers\Url;
 
 $this->params['breadcrumbs'] = [
-    ['label' => Yii::t('app', 'Pages'), 'url' => Url::to(['index'])],
-    ['label' => Yii::t('app', 'Create') . Yii::t('app', 'Pages')],
+    ['label' => yii::t('app', 'Pages'), 'url' => Url::to(['index'])],
+    ['label' => yii::t('app', 'Create') . yii::t('app', 'Pages')],
 ];
 
 /**

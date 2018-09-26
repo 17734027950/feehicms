@@ -14,6 +14,7 @@ use feehi\cdn\TargetAbstract;
 use Yii;
 use common\libs\Constants;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%article}}".
@@ -66,14 +67,6 @@ class Article extends \yii\db\ActiveRecord
         ["w"=>185, "h"=>110],//文章详情下边图片推荐
         ["w"=>125, "h"=>86],//热门推荐
     ];
-
-    public function init()
-    {
-        parent::init();
-        $this->on(self::EVENT_BEFORE_UPDATE, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_BEFORE_INSERT, [$this, 'beforeSaveEvent']);
-        $this->on(self::EVENT_AFTER_FIND, [$this, 'afterFindEvent']);
-    }
 
     public function behaviors()
     {
@@ -228,10 +221,10 @@ class Article extends \yii\db\ActiveRecord
             'flag_roll' => Yii::t('app', 'Is Roll'),
             'flag_bold' => Yii::t('app', 'Is Bold'),
             'flag_picture' => Yii::t('app', 'Is Picture'),
-            'password' => Yii::t('app', 'Password'),
-            'scan_count' => Yii::t('app', 'Scan Count'),
-            'comment_count' => Yii::t('app', 'Comment Count'),
-            'category' => Yii::t('app', 'Category'),
+            'password' => yii::t('app', 'Password'),
+            'scan_count' => yii::t('app', 'Scan Count'),
+            'comment_count' => yii::t('app', 'Comment Count'),
+            'category' => yii::t('app', 'Category'),
         ];
     }
 
@@ -274,22 +267,24 @@ class Article extends \yii\db\ActiveRecord
         return $this->getArticleLikes()->count('id');
     }
 
-    public function afterFindEvent($event)
+    public function afterFind()
     {
-        if ($event->sender->thumb) {
+        parent::afterFind();
+        if ($this->thumb) {
             /** @var TargetAbstract $cdn */
-            $cdn = Yii::$app->get('cdn');
-            $event->sender->thumb = $cdn->getCdnUrl($event->sender->thumb);
+            $cdn = yii::$app->get('cdn');
+            $this->thumb = $cdn->getCdnUrl($this->thumb);
         }
     }
 
-    public function beforeSaveEvent($event)
+    public function beforeSave($insert)
     {
-        if ($event->sender->thumb) {
+        if ($this->thumb) {
             /** @var TargetAbstract $cdn */
-            $cdn = Yii::$app->get('cdn');
-            $event->sender->thumb = str_replace($cdn->host, '', $event->sender->thumb);
+            $cdn = yii::$app->get('cdn');
+            $this->thumb = str_replace($cdn->host, '', $this->thumb);
         }
+        return parent::beforeSave($insert);
     }
 
     public function getThumbUrlBySize($width='', $height='')
@@ -316,7 +311,7 @@ class Article extends \yii\db\ActiveRecord
                 return substr_replace($this->thumb,$thumbExt, $dotPosition, 0);
             }
         }
-        return Yii::$app->getRequest()->getBaseUrl() . '/timthumb.php?' . http_build_query(['src'=>$this->thumb, 'h'=>$height, 'w'=>$width, 'zc'=>0]);
+        return yii::$app->getRequest()->getBaseUrl() . '/timthumb.php?' . http_build_query(['src'=>$this->thumb, 'h'=>$height, 'w'=>$width, 'zc'=>0]);
     }
     
 }

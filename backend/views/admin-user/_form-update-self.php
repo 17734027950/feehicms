@@ -5,7 +5,6 @@
  * Email: job@feehi.com
  * Created at: 2016-03-25 11:15
  */
-
 /**
  * @var $this yii\web\View
  * @var $model backend\models\User
@@ -28,7 +27,7 @@ $this->title = "Admin";
                 <div class="hr-line-dashed"></div>
                 <?= $form->field($model, 'avatar')->imgInput([
                     'width' => '200px',
-                    'baseUrl' => Yii::$app->params['admin']['url']
+                    'baseUrl' => yii::$app->params['admin']['url']
                 ]) ?>
                 <div class="hr-line-dashed"></div>
                 <?= $form->field($model, 'email')->textInput(['maxlength' => 64]) ?>

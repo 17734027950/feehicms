@@ -8,13 +8,9 @@
 
 namespace frontend\models\search;
 
-use backend\behaviors\TimeSearchBehavior;
-use backend\components\search\SearchEvent;
-use Yii;
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
-class UserSearch extends \frontend\models\User
+class UserSearch extends \common\models\User
 {
     public $create_start_at;
 
@@ -25,27 +21,16 @@ class UserSearch extends \frontend\models\User
     public $update_end_at;
 
 
-    public function behaviors()
-    {
-        return [
-            TimeSearchBehavior::className()
-        ];
-    }
-
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['username', 'email', 'created_at', 'updated_at'], 'string'],
+            [['username', 'email', 'create_start_at', 'create_end_at', 'update_start_at', 'update_end_at'], 'string'],
+            [['created_at', 'updated_at'], 'string'],
             ['status', 'integer'],
         ];
-    }
-
-    public function scenarios()
-    {
-        return Model::scenarios();
     }
 
     /**
@@ -55,9 +40,7 @@ class UserSearch extends \frontend\models\User
     public function search($params)
     {
         $query = self::find();
-        /** @var ActiveDataProvider $dataProvider */
-        $dataProvider = Yii::createObject([
-            'class' => ActiveDataProvider::className(),
+        $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
@@ -74,8 +57,44 @@ class UserSearch extends \frontend\models\User
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['=', 'status', $this->status]);
+        $create_start_at_unixtimestamp = $create_end_at_unixtimestamp = $update_start_at_unixtimestamp = $update_end_at_unixtimestamp = '';
+        if ($this->create_start_at != '') {
+            $create_start_at_unixtimestamp = strtotime($this->create_start_at);
+        }
+        if ($this->create_end_at != '') {
+            $create_end_at_unixtimestamp = strtotime($this->create_end_at);
+        }
+        if ($this->update_start_at != '') {
+            $update_start_at_unixtimestamp = strtotime($this->update_start_at);
+        }
+        if ($this->update_end_at != '') {
+            $update_end_at_unixtimestamp = strtotime($this->update_end_at);
+        }
+        if ($create_start_at_unixtimestamp != '' && $create_end_at_unixtimestamp == '') {
+            $query->andFilterWhere(['>', 'created_at', $create_start_at_unixtimestamp]);
+        } elseif ($create_start_at_unixtimestamp == '' && $create_end_at_unixtimestamp != '') {
+            $query->andFilterWhere(['<', 'created_at', $create_end_at_unixtimestamp]);
+        } else {
+            $query->andFilterWhere([
+                'between',
+                'created_at',
+                $create_start_at_unixtimestamp,
+                $create_end_at_unixtimestamp
+            ]);
+        }
 
-        $this->trigger(SearchEvent::BEFORE_SEARCH, Yii::createObject([ 'class' => SearchEvent::className(), 'query'=>$query]));
+        if ($update_start_at_unixtimestamp != '' && $update_end_at_unixtimestamp == '') {
+            $query->andFilterWhere(['>', 'updated_at', $update_start_at_unixtimestamp]);
+        } elseif ($update_start_at_unixtimestamp == '' && $update_end_at_unixtimestamp != '') {
+            $query->andFilterWhere(['<', 'updated_at', $update_start_at_unixtimestamp]);
+        } else {
+            $query->andFilterWhere([
+                'between',
+                'updated_at',
+                $update_start_at_unixtimestamp,
+                $update_end_at_unixtimestamp
+            ]);
+        }
         return $dataProvider;
     }
 

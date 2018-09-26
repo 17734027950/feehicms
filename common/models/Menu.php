@@ -37,13 +37,6 @@ class Menu extends \yii\db\ActiveRecord
     const DISPLAY_YES = 1;
     const DISPLAY_NO = 0;
 
-    public function init()
-    {
-        parent::init();
-        $this->on(self::EVENT_AFTER_VALIDATE, [$this, 'afterValidateEvent']);
-        $this->on(self::EVENT_BEFORE_DELETE, [$this, 'beforeDeleteEvent']);
-    }
-
     /**
      * @inheritdoc
      */
@@ -142,7 +135,7 @@ class Menu extends \yii\db\ActiveRecord
         static $menus = null;
         if( $menus === null ) $menus = self::find()->where(['type' => $type])->orderBy("sort asc,parent_id asc")->asArray()->all();
         foreach ($menus as &$menu){
-            $menu['name'] = Yii::t('menu', $menu['name']);
+            $menu['name'] = yii::t('menu', $menu['name']);
         }
         return $menus;
     }
@@ -187,18 +180,18 @@ class Menu extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function afterValidateEvent($event)
+    public function afterValidate()
     {
-        if( !$event->sender->getIsNewRecord() ){
-            if($event->sender->id == $event->sender->parent_id) {
-                $event->sender->addError('parent_id', Yii::t('app', 'Cannot be themselves sub'));
+        if( !$this->getIsNewRecord() ){
+            if($this->id == $this->parent_id) {
+                $this->addError('parent_id', yii::t('app', 'Cannot be themself sub.'));
                 return false;
             }
-            $familyTree = new FamilyTree(Menu::_getMenus($event->sender->type));
-            $descendants = $familyTree->getDescendants($event->sender->id);
+            $familyTree = new FamilyTree(Menu::_getMenus($this->type));
+            $descendants = $familyTree->getDescendants($this->id);
             $descendants = ArrayHelper::getColumn($descendants, 'id');
-            if( in_array($event->sender->parent_id, $descendants) ){
-                $event->sender->addError('parent_id', Yii::t('app', 'Cannot be themselves descendants sub'));
+            if( in_array($this->parent_id, $descendants) ){
+                $this->addError('parent_id', yii::t('app', 'Cannot be themselves descendants sub'));
                 return false;
             }
         }
@@ -207,15 +200,16 @@ class Menu extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function beforeDeleteEvent($event)
+    public function beforeDelete()
     {
-        $menus = Menu::_getMenus($event->sender->type);
+        $menus = Menu::_getMenus($this->type);
         $familyTree = new FamilyTree( $menus );
-        $subs = $familyTree->getDescendants($event->sender->id);
+        $subs = $familyTree->getDescendants($this->id);
         if (! empty($subs)) {
-            $event->sender->addError('id', Yii::t('app', 'Sub Menu exists, cannot be deleted'));
-            $event->isValid = false;
+            $this->addError('id', yii::t('app', 'Sub Menu exists, cannot be deleted'));
+            return false;
         }
+        return true;
     }
 
     public function getParent()

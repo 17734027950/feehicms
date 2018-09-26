@@ -10,7 +10,6 @@ namespace backend\widgets\ueditor;
 
 use yii;
 use yii\imagine\Image;
-use yii\web\Response;
 
 class UeditorAction extends yii\base\Action
 {
@@ -111,7 +110,7 @@ class UeditorAction extends yii\base\Action
             'filePathFormat' => '/upload/file/{yyyy}{mm}{dd}/{rand:8}_{filename}',
             'imageManagerListPath' => '/upload/image/',
             'fileManagerListPath' => '/upload/file/',
-            "imageUrlPrefix" => Yii::$app->params['site']['url'],
+            "imageUrlPrefix" => yii::$app->params['site']['url'],
         ];
         $this->config = $this->config + $default + $CONFIG;
         $this->uploadPath = Yii::getAlias('@frontend/web/uploads');
@@ -139,7 +138,7 @@ class UeditorAction extends yii\base\Action
         ];
 
         if (isset($actions[$action])) {
-            Yii::$app->getResponse()->format = Response::FORMAT_JSON;
+            yii::$app->getResponse()->format = yii\web\Response::FORMAT_JSON;
             return call_user_func_array([$this, 'action' . $actions[$action]], []);
         } else {
             return $this->show(['state' => 'Unknown action.']);
@@ -451,7 +450,7 @@ class UeditorAction extends yii\base\Action
         $end = $start + $size;
 
         /* 获取文件列表 */
-        $path = Yii::getAlias('@ueditor') . (substr($path, 0, 1) == '/' ? '' : '/') . $path;
+        $path = yii::getAlias('@ueditor') . (substr($path, 0, 1) == '/' ? '' : '/') . $path;
         $files = $this->getFiles($path, $allowFiles);
         if (! count($files)) {
             $result = [
@@ -498,7 +497,7 @@ class UeditorAction extends yii\base\Action
         }
         $handle = opendir($path);
         //baseUrl用于兼容使用alias的二级目录部署方式
-        $baseUrl = str_replace(Yii::getAlias('@frontend/web'), '', Yii::getAlias('@ueditor'));
+        $baseUrl = str_replace(yii::getAlias('@frontend/web'), '', yii::getAlias('@ueditor'));
         while (false !== ($file = readdir($handle))) {
             if ($file != '.' && $file != '..') {
                 $path2 = $path . $file;
@@ -512,7 +511,7 @@ class UeditorAction extends yii\base\Action
                     }
                     if (preg_match($pat, $file)) {
                         $files[] = [
-                            'url' => Yii::$app->params['site']['url'] . $baseUrl . substr($path2, strlen(Yii::getAlias('@ueditor'))),
+                            'url' => yii::$app->params['site']['url'] . $baseUrl . substr($path2, strlen(yii::getAlias('@ueditor'))),
                             'mtime' => filemtime($path2)
                         ];
                     }
@@ -533,14 +532,14 @@ class UeditorAction extends yii\base\Action
         $callback = Yii::$app->request->get('callback', null);
 
         if ($callback && is_string($callback)) {
-            Yii::$app->response->format = Response::FORMAT_JSONP;
+            Yii::$app->response->format = yii\web\Response::FORMAT_JSONP;
             return [
                 'callback' => $callback,
                 'data' => $result
             ];
         }
 
-        Yii::$app->response->format = Response::FORMAT_JSON;
+        Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
         return $result;
     }
 }

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50553
 File Encoding         : 65001
 
-Date: 2018-09-26 15:22:28
+Date: 2018-10-23 11:01:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -57,7 +57,7 @@ CREATE TABLE `feehi_admin_user` (
 -- ----------------------------
 -- Records of feehi_admin_user
 -- ----------------------------
-INSERT INTO `feehi_admin_user` VALUES ('1', 'admin', 'zr9mY7lt23oAhj_ZYjydbLJKcbE3FJ19', '$2y$13$0N19k70Z1A76U.dQUthOjO7VEBUc.aqa9w2UQ6IrmB.5epF.RTc6y', null, 'admin@admin.com', '', '10', '1468288038', '1476711945');
+INSERT INTO `feehi_admin_user` VALUES ('1', 'admin', 'zr9mY7lt23oAhj_ZYjydbLJKcbE3FJ19', '$2y$13$cDjBDzQaUBp5UE7UPbK78OTuIgBDa5V0M5KT69d1WfHvla6rIB7xe', null, 'admin@admin.com', '', '10', '1468288038', '1476711945');
 
 -- ----------------------------
 -- Table structure for `feehi_article`
@@ -608,7 +608,7 @@ INSERT INTO `feehi_options` VALUES ('9', '0', 'website_status', '1', '1', '0', '
 INSERT INTO `feehi_options` VALUES ('10', '0', 'website_comment', '1', '1', '0', '', '0');
 INSERT INTO `feehi_options` VALUES ('11', '0', 'website_comment_need_verify', '0', '1', '0', '', '0');
 INSERT INTO `feehi_options` VALUES ('12', '0', 'website_timezone', 'Asia/Shanghai', '1', '0', '', '0');
-INSERT INTO `feehi_options` VALUES ('13', '0', 'website_url', 'http://localhost/', '1', '0', '', '0');
+INSERT INTO `feehi_options` VALUES ('13', '0', 'website_url', 'http://localhost:8080/yangchi/github/feehicms2.0/frontend/web/', '1', '0', '', '0');
 INSERT INTO `feehi_options` VALUES ('14', '0', 'smtp_host', '', '1', '0', '', '0');
 INSERT INTO `feehi_options` VALUES ('15', '0', 'smtp_username', '', '1', '0', '', '0');
 INSERT INTO `feehi_options` VALUES ('16', '0', 'smtp_password', '', '1', '0', '', '0');

@@ -9,7 +9,7 @@
 namespace backend\models\form;
 
 use common\helpers\Util;
-use yii;
+use Yii;
 use common\libs\Constants;
 
 class AdForm extends \Common\models\Options
@@ -26,23 +26,25 @@ class AdForm extends \Common\models\Options
 
     public $updated_at;
 
+
+
     /**
      * @inheritdoc
      */
     public function attributeLabels()
     {
         return [
-            'name' => yii::t('app', 'Sign'),
-            'input_type' => yii::t('app', 'Ad Type'),
-            'tips' => yii::t('app', 'Description'),
-            'ad' => yii::t('app', 'Ad'),
-            'link' => yii::t('app', 'Jump Link'),
-            'desc' => yii::t('app', 'Ad Explain'),
-            'autoload' => yii::t('app', 'Status'),
-            'sort' => yii::t('app', 'Sort'),
-            'target' => yii::t('app', 'Target'),
-            'created_at' => yii::t('app', 'Created At'),
-            'updated_at' => yii::t('app', 'Updated At'),
+            'name' => Yii::t('app', 'Sign'),
+            'input_type' => Yii::t('app', 'Ad Type'),
+            'tips' => Yii::t('app', 'Description'),
+            'ad' => Yii::t('app', 'Ad'),
+            'link' => Yii::t('app', 'Jump Link'),
+            'desc' => Yii::t('app', 'Ad Explain'),
+            'autoload' => Yii::t('app', 'Status'),
+            'sort' => Yii::t('app', 'Sort'),
+            'target' => Yii::t('app', 'Target'),
+            'created_at' => Yii::t('app', 'Created At'),
+            'updated_at' => Yii::t('app', 'Updated At'),
         ];
     }
 
@@ -57,7 +59,7 @@ class AdForm extends \Common\models\Options
                 ['name'],
                 'match',
                 'pattern' => '/^[a-zA-Z][0-9_]*/',
-                'message' => yii::t('app', 'Must begin with alphabet and can only includes alphabet,_,and number')
+                'message' => Yii::t('app', 'Must begin with alphabet and can only includes alphabet,_,and number')
             ],
             [['name', 'tips', 'input_type'], 'required'],
             [['sort', 'autoload'], 'integer'],
@@ -85,7 +87,7 @@ class AdForm extends \Common\models\Options
             'link' => $this->link,
             'target' => $this->target,
             'desc' => $this->desc,
-            'created_at' => $insert ? time() : $this->created_at,
+            'created_at' => $this->getIsNewRecord() ? time() : $this->created_at,
             'updated_at' => time(),
         ];
         $this->value = json_encode($value);
@@ -97,7 +99,7 @@ class AdForm extends \Common\models\Options
         $value = json_decode($this->value);
         if( $this->input_type !== Constants::AD_TEXT){
             /** @var $cdn \feehi\cdn\TargetAbstract */
-            $cdn = yii::$app->get('cdn');
+            $cdn = Yii::$app->get('cdn');
             $this->ad = $cdn->getCdnUrl($value->ad);
         }else{
             $this->ad = $value->ad;
@@ -122,13 +124,15 @@ class AdForm extends \Common\models\Options
             'created_at' => $value->created_at,
             'updated_at' => $value->updated_at,
         ]);
+        parent::afterFind();
     }
 
     public function afterDelete()
     {
         if( $this->input_type != Constants::AD_TEXT ){
-            $file = yii::getAlias('@frontend/web') . $this->ad;
+            $file = Yii::getAlias('@frontend/web') . $this->ad;
             if( file_exists($file) && is_file($file) ) unlink($file);
         }
+        return parent::beforeDelete();
     }
 }

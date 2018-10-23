@@ -21,6 +21,7 @@ return [
                 [
                     'class' => yii\log\FileTarget::className(),//当触发levels配置的错误级别时，保存到日志文件
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/'.date('Y/m/d') . '.log',
                 ],
                 [
                     'class' => yii\log\EmailTarget::className(),//当触发levels配置的错误级别时，发送到此些邮箱（请改成自己的邮箱）
@@ -56,6 +57,9 @@ return [
                 [
                     'class' => yii\rest\UrlRule::className(),
                     'controller' => ['user', 'article'],
+                    /*'extraPatterns' => [
+                        'GET search' => 'search',
+                    ],*/
                 ],
             ],
         ],
@@ -68,6 +72,7 @@ return [
         ],
         'response' => [
             'format' => yii\web\Response::FORMAT_JSON,
+            'as format' => api\behaviors\ResponseFormatBehavior::className()
         ],
     ],
     'modules' => [

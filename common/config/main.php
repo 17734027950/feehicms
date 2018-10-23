@@ -1,7 +1,7 @@
 <?php
 $config = [
     'name' => 'Feehi CMS',
-    'version' => '2.0.4.1',
+    'version' => '2.0.5',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -31,7 +31,7 @@ $config = [
         'mailer' => [//邮箱发件人配置，会被main-local.php以及后台管理页面中的smtp配置覆盖
             'class' => yii\swiftmailer\Mailer::className(),
             'viewPath' => '@common/mail',
-            'useFileTransport' => false,//false发送邮件，true只是生成邮件在runtime文件夹下，不发邮件
+            'useFileTransport' => true,//false发送邮件，true只是生成邮件在runtime文件夹下，不发邮件
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.feehi.com',  //每种邮箱的host配置不一样
@@ -97,7 +97,7 @@ $config = [
         ],
     ],
 ];
-$install = yii::getAlias('@common/config/conf/db.php');
+$install = Yii::getAlias('@common/config/conf/db.php');
 if( file_exists($install) ){
     return yii\helpers\ArrayHelper::merge($config, (require $install));
 }

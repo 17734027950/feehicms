@@ -15,13 +15,12 @@
 use backend\grid\DateColumn;
 use backend\grid\GridView;
 use frontend\models\User;
-use yii\helpers\Html;
 use backend\widgets\Bar;
 use backend\grid\CheckboxColumn;
 use backend\grid\ActionColumn;
 
 $this->title = 'Users';
-$this->params['breadcrumbs'][] = yii::t('app', 'Users');
+$this->params['breadcrumbs'][] = Yii::t('app', 'Users');
 ?>
 <div class="row">
     <div class="col-sm-12">
@@ -50,12 +49,12 @@ $this->params['breadcrumbs'][] = yii::t('app', 'Users');
                         ],
                         [
                             'attribute' => 'status',
-                            'label' => yii::t('app', 'Status'),
+                            'label' => Yii::t('app', 'Status'),
                             'value' => function ($model) {
                                 if($model->status == User::STATUS_ACTIVE){
-                                    return yii::t('app', 'Normal');
+                                    return Yii::t('app', 'Normal');
                                 }else if( $model->status == User::STATUS_DELETED ){
-                                    return yii::t('app', 'Disabled');
+                                    return Yii::t('app', 'Disabled');
                                 }
                             },
                             'filter' => User::getStatuses(),
@@ -63,28 +62,10 @@ $this->params['breadcrumbs'][] = yii::t('app', 'Users');
                         [
                             'class' => DateColumn::className(),
                             'attribute' => 'created_at',
-                            'filter' => Html::activeInput('text', $searchModel, 'create_start_at', [
-                                    'class' => 'form-control layer-date',
-                                    'placeholder' => '',
-                                    'onclick' => "laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'});"
-                                ]) . Html::activeInput('text', $searchModel, 'create_end_at', [
-                                    'class' => 'form-control layer-date',
-                                    'placeholder' => '',
-                                    'onclick' => "laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"
-                                ]),
                         ],
                         [
                             'class' => DateColumn::className(),
                             'attribute' => 'updated_at',
-                            'filter' => Html::activeInput('text', $searchModel, 'update_start_at', [
-                                    'class' => 'form-control layer-date',
-                                    'placeholder' => '',
-                                    'onclick' => "laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"
-                                ]) . Html::activeInput('text', $searchModel, 'update_end_at', [
-                                    'class' => 'form-control layer-date',
-                                    'placeholder' => '',
-                                    'onclick' => "laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"
-                                ]),
                         ],
                         [
                             'class' => ActionColumn::className(),

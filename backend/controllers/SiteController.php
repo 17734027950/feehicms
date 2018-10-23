@@ -8,7 +8,7 @@
 
 namespace backend\controllers;
 
-use yii;
+use Yii;
 use Exception;
 use common\models\Comment;
 use backend\models\form\LoginForm;
@@ -88,7 +88,7 @@ class SiteController extends \yii\web\Controller
      */
     public function actionMain()
     {
-        switch (yii::$app->getDb()->driverName) {
+        switch (Yii::$app->getDb()->driverName) {
             case "mysql":
                 $dbInfo = 'MySQL ' . (new Query())->select('version()')->one()['version()'];
                 break;
@@ -102,8 +102,7 @@ class SiteController extends \yii\web\Controller
             'OPERATING_ENVIRONMENT' => PHP_OS . ' ' . $_SERVER['SERVER_SOFTWARE'],
             'PHP_RUN_MODE' => php_sapi_name(),
             'DB_INFO' => $dbInfo,
-            'PROGRAM_VERSION' => "1.0",
-            'UPLOAD_MAX_FILESIZE' => ini_get('upload_max_filesize'),
+            'UPLOAD_MAX_FILE_SIZE' => ini_get('upload_max_filesize'),
             'MAX_EXECUTION_TIME' => ini_get('max_execution_time') . "s"
         ];
         $obj = new ServerInfo();
@@ -265,8 +264,7 @@ class SiteController extends \yii\web\Controller
             return $this->render('error', [
                 'code' => $statusCode,
                 'name' => $name,
-                'message' => $message,
-                'exception' => $exception,
+                'message' => $message
             ]);
         }
     }

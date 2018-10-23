@@ -22,6 +22,7 @@ use yii\behaviors\TimestampBehavior;
  */
 class AdminLog extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */
@@ -82,17 +83,21 @@ class AdminLog extends \yii\db\ActiveRecord
             '{{%ID%}}',
             '{{%RECORD%}}'
         ], [
-            yii::t('app', 'Admin user'),
-            yii::t('app', 'through'),
-            yii::t('app', 'created'),
-            yii::t('app', 'updated'),
-            yii::t('app', 'deleted'),
-            yii::t('app', 'id'),
-            yii::t('app', 'record')
+            Yii::t('app', 'Admin user'),
+            Yii::t('app', 'through'),
+            Yii::t('app', 'created'),
+            Yii::t('app', 'updated'),
+            Yii::t('app', 'deleted'),
+            Yii::t('app', 'id'),
+            Yii::t('app', 'record')
         ], $this->description);
-        $this->description = preg_replace_callback('/\d{10}/', function ($matches) {
-            return date('Y-m-d H:i:s', $matches[0]);
+        $this->description = preg_replace_callback('/\(created_at\) : (\d{1,10})=>(\d{1,10})/', function ($matches) {
+            return str_replace([$matches[1], $matches[2]], [Yii::$app->getFormatter()->asDate((int)$matches[1]), Yii::$app->getFormatter()->asDate((int)$matches[2])], $matches[0]);
         }, $this->description);
+        $this->description = preg_replace_callback('/\(updated_at\) : (\d{1,10})=>(\d{1,10})/', function ($matches) {
+            return str_replace([$matches[1], $matches[2]], [Yii::$app->getFormatter()->asDate((int)$matches[1]), Yii::$app->getFormatter()->asDate((int)$matches[2])], $matches[0]);
+        }, $this->description);
+        parent::afterFind();
     }
 
     /**

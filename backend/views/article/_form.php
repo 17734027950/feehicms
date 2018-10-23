@@ -46,18 +46,13 @@ $this->title = "Articles";
 
                     <div class="col-md-5 droppable sortable ui-droppable ui-sortable" style="">
                         <div class="ibox-title">
-                            <h5><?= yii::t('app', 'Category') ?></h5>
+                            <h5><?= Yii::t('app', 'Category') ?></h5>
                         </div>
                         <div class="ibox-content">
                             <div class="row">
                                 <div class="form-group">
                                     <div class="col-sm-12 col-sm-offset-1">
-                                        <div class="form-group col-sm-12 field-article-parent_id">
-                                            <div class="col-sm-12 m-l-n">
-                                                <?= $form->field($model, 'cid')->label('')->dropDownList(Category::getCategoriesName(), ['multiple'=>''])?>
-                                            </div>
-                                            <div class="help-block m-b-none"></div>
-                                        </div>
+                                        <?= $form->field($model, 'cid', ['size'=>10])->label(false)->chosenSelect(Category::getCategoriesName())?>
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +62,7 @@ $this->title = "Articles";
                     <!--属性设置start-->
                     <div class="col-md-5 droppable sortable ui-droppable ui-sortable" style="">
                         <div class="ibox-title">
-                            <h5><?= yii::t('app', 'Attributes') ?></h5>
+                            <h5><?= Yii::t('app', 'Attributes') ?></h5>
                         </div>
                         <div class="ibox-content">
                             <div class="row">
@@ -96,7 +91,7 @@ $this->title = "Articles";
                     <!--seo设置start-->
                     <div class="col-md-5 droppable sortable ui-droppable ui-sortable" style="">
                         <div class="ibox-title">
-                            <h5><?= yii::t('app', 'Seo Setting') ?></h5>
+                            <h5><?= Yii::t('app', 'Seo Setting') ?></h5>
                         </div>
                         <div class="ibox-content">
                             <?= $form->field($model, 'seo_title', [
@@ -118,7 +113,7 @@ $this->title = "Articles";
 
                     <div class="col-md-5 droppable sortable ui-droppable ui-sortable" style="">
                         <div class="ibox-title">
-                            <h5><?= yii::t('app', 'Other') ?></h5>
+                            <h5><?= Yii::t('app', 'Other') ?></h5>
                             <div class="ibox-tools">
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>

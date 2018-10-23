@@ -14,7 +14,6 @@ use feehi\cdn\TargetAbstract;
 use Yii;
 use common\libs\Constants;
 use yii\behaviors\TimestampBehavior;
-use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%article}}".
@@ -130,6 +129,7 @@ class Article extends \yii\db\ActiveRecord
             [['type'], 'default', 'value'=>self::ARTICLE, 'on'=>'article'],
             [['type'], 'default', 'value'=>self::SINGLE_PAGE, 'on'=>'page'],
             [['password'], 'string', 'max'=>20],
+            ['cid', 'default', 'value'=>0]
         ];
     }
 
@@ -221,10 +221,10 @@ class Article extends \yii\db\ActiveRecord
             'flag_roll' => Yii::t('app', 'Is Roll'),
             'flag_bold' => Yii::t('app', 'Is Bold'),
             'flag_picture' => Yii::t('app', 'Is Picture'),
-            'password' => yii::t('app', 'Password'),
-            'scan_count' => yii::t('app', 'Scan Count'),
-            'comment_count' => yii::t('app', 'Comment Count'),
-            'category' => yii::t('app', 'Category'),
+            'password' => Yii::t('app', 'Password'),
+            'scan_count' => Yii::t('app', 'Scan Count'),
+            'comment_count' => Yii::t('app', 'Comment Count'),
+            'category' => Yii::t('app', 'Category'),
         ];
     }
 
@@ -269,19 +269,19 @@ class Article extends \yii\db\ActiveRecord
 
     public function afterFind()
     {
-        parent::afterFind();
         if ($this->thumb) {
             /** @var TargetAbstract $cdn */
-            $cdn = yii::$app->get('cdn');
+            $cdn = Yii::$app->get('cdn');
             $this->thumb = $cdn->getCdnUrl($this->thumb);
         }
+        parent::afterFind();
     }
 
     public function beforeSave($insert)
     {
         if ($this->thumb) {
             /** @var TargetAbstract $cdn */
-            $cdn = yii::$app->get('cdn');
+            $cdn = Yii::$app->get('cdn');
             $this->thumb = str_replace($cdn->host, '', $this->thumb);
         }
         return parent::beforeSave($insert);
@@ -311,7 +311,7 @@ class Article extends \yii\db\ActiveRecord
                 return substr_replace($this->thumb,$thumbExt, $dotPosition, 0);
             }
         }
-        return yii::$app->getRequest()->getBaseUrl() . '/timthumb.php?' . http_build_query(['src'=>$this->thumb, 'h'=>$height, 'w'=>$width, 'zc'=>0]);
+        return Yii::$app->getRequest()->getBaseUrl() . '/timthumb.php?' . http_build_query(['src'=>$this->thumb, 'h'=>$height, 'w'=>$width, 'zc'=>0]);
     }
     
 }

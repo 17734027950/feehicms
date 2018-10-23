@@ -9,6 +9,7 @@
 namespace backend\models;
 
 use common\helpers\Util;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 
 class FriendlyLink extends \common\models\FriendlyLink
@@ -28,5 +29,13 @@ class FriendlyLink extends \common\models\FriendlyLink
     {
         Util::handleModelSingleFileUpload($this, 'image', $insert, '@friendlylink/');
         return parent::beforeSave($insert);
+    }
+
+    public function beforeDelete()
+    {
+        if( !empty( $this->image ) ){
+            Util::deleteThumbnails(Yii::getAlias('@frontend/web/') . str_replace(Yii::$app->params['site']['url'], '', $this->image), [], true);
+        }
+        return parent::beforeDelete();
     }
 }

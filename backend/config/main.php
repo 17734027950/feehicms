@@ -23,6 +23,7 @@ return [
             'returnUrlParam' => '_backend_returnUrl',
         ],
         'session' => [
+            'name' => 'BACKEND_FEEHICMS',
             'timeout' => 1440,//session过期时间，单位为秒
         ],
         'log' => [//此项具体详细配置，请访问http://wiki.feehi.com/index.php?title=Yii2_log
@@ -31,6 +32,7 @@ return [
                 [
                     'class' => yii\log\FileTarget::className(),//当触发levels配置的错误级别时，保存到日志文件
                     'levels' => ['error', 'warning'],
+                    'logFile' => '@runtime/logs/'.date('Y/m/d') . '.log',
                 ],
                 [
                     'class' => yii\log\EmailTarget::className(),//当触发levels配置的错误级别时，发送到message to配置的邮箱中（请改成自己的邮箱）
@@ -92,14 +94,17 @@ return [
                         'f' => 'js/plugins/layer/laydate/theme/default/laydate.css',
                         'g' => 'css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css',
                         'h' => 'css/plugins/toastr/toastr.min.css',
+                        'i' => 'css/plugins/chosen/chosen.css',
+                        'j' => 'css/feehi.css',
 
                     ],
                     'js' => [
                         'a' => 'js/feehi.js',
-                        'c' => 'js/plugins/layer/laydate/laydate.js',
-                        'd' => 'js/plugins/layer/layer.min.js',
-                        'e' => 'js/plugins/prettyfile/bootstrap-prettyfile.js',
-                        'f' => 'js/plugins/toastr/toastr.min.js',
+                        'b' => 'js/plugins/layer/laydate/laydate.js',
+                        'c' => 'js/plugins/layer/layer.min.js',
+                        'd' => 'js/plugins/prettyfile/bootstrap-prettyfile.js',
+                        'e' => 'js/plugins/toastr/toastr.min.js',
+                        'f' => 'js/plugins/chosen/chosen.jquery.js',
                     ],
                 ],
                 backend\assets\IndexAsset::className() => [

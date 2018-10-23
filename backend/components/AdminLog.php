@@ -8,7 +8,7 @@
 
 namespace backend\components;
 
-use yii;
+use Yii;
 use backend\models\AdminLog as AdminLogModel;
 
 class AdminLog extends \yii\base\Event
@@ -18,24 +18,26 @@ class AdminLog extends \yii\base\Event
      * 数据库新增保存日志
      *
      * @param $event
+     * @throws \Throwable
      */
     public static function create($event)
     {
         if ($event->sender->className() !== AdminLogModel::className()) {
             $desc = '<br>';
             foreach ($event->sender->getAttributes() as $name => $value) {
+                !is_string( $value ) && $value = print_r($value, true);
                 $desc .= $event->sender->getAttributeLabel($name) . '(' . $name . ') => ' . $value . ',<br>';
             }
             $desc = substr($desc, 0, -5);
             $model = new AdminLogModel();
             $class = $event->sender->className();
-            $id_des = '';
+            $idDes = '';
             if (isset($event->sender->id)) {
-                $id_des = '{{%ID%}} ' . $event->sender->id;
+                $idDes = '{{%ID%}} ' . $event->sender->id;
             }
-            $model->description = '{{%ADMIN_USER%}} [ ' . yii::$app->getUser()->getIdentity()->username . ' ] {{%BY%}} ' . $class . ' [ ' . $class::tableName() . ' ] ' . " {{%CREATED%}} {$id_des} {{%RECORD%}}: " . $desc;
+            $model->description = '{{%ADMIN_USER%}} [ ' . Yii::$app->getUser()->getIdentity()->username . ' ] {{%BY%}} ' . $class . ' [ ' . $class::tableName() . ' ] ' . " {{%CREATED%}} {$idDes} {{%RECORD%}}: " . $desc;
             $model->route = Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
-            $model->user_id = yii::$app->getUser()->getId();
+            $model->user_id = Yii::$app->getUser()->getId();
             $model->save();
         }
     }
@@ -44,6 +46,7 @@ class AdminLog extends \yii\base\Event
      * 数据库修改保存日志
      *
      * @param $event
+     * @throws \Throwable
      */
     public static function update($event)
     {
@@ -52,18 +55,19 @@ class AdminLog extends \yii\base\Event
             $oldAttributes = $event->sender->oldAttributes;
             foreach ($event->changedAttributes as $name => $value) {
                 if( $oldAttributes[$name] == $value ) continue;
+                !is_string( $value ) && $value = print_r($value, true);
                 $desc .= $event->sender->getAttributeLabel($name) . '(' . $name . ') : ' . $value . '=>' . $event->sender->oldAttributes[$name] . ',<br>';
             }
             $desc = substr($desc, 0, -5);
             $model = new AdminLogModel();
             $class = $event->sender->className();
-            $id_des = '';
+            $idDes = '';
             if (isset($event->sender->id)) {
-                $id_des = '{{%ID%}} ' . $event->sender->id;
+                $idDes = '{{%ID%}} ' . $event->sender->id;
             }
-            $model->description = '{{%ADMIN_USER%}} [ ' . yii::$app->getUser()->getIdentity()->username . ' ] {{%BY%}} ' . $class . ' [ ' . $class::tableName() . ' ] ' . " {{%UPDATED%}} {$id_des} {{%RECORD%}}: " . $desc;
+            $model->description = '{{%ADMIN_USER%}} [ ' . Yii::$app->getUser()->getIdentity()->username . ' ] {{%BY%}} ' . $class . ' [ ' . $class::tableName() . ' ] ' . " {{%UPDATED%}} {$idDes} {{%RECORD%}}: " . $desc;
             $model->route = Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
-            $model->user_id = yii::$app->getUser()->id;
+            $model->user_id = Yii::$app->getUser()->id;
             $model->save();
         }
     }
@@ -72,23 +76,25 @@ class AdminLog extends \yii\base\Event
      * 数据库删除保存日志
      *
      * @param $event
+     * @throws \Throwable
      */
     public static function delete($event)
     {
         $desc = '<br>';
         foreach ($event->sender->getAttributes() as $name => $value) {
+            !is_string( $value ) && $value = print_r($value, true);
             $desc .= $event->sender->getAttributeLabel($name) . '(' . $name . ') => ' . $value . ',<br>';
         }
         $desc = substr($desc, 0, -5);
         $model = new AdminLogModel();
         $class = $event->sender->className();
-        $id_des = '';
+        $idDes = '';
         if (isset($event->sender->id)) {
-            $id_des = '{{%ID%}} ' . $event->sender->id;
+            $idDes = '{{%ID%}} ' . $event->sender->id;
         }
-        $model->description = '{{%ADMIN_USER%}} [ ' . yii::$app->getUser()->getIdentity()->username . ' ] {{%BY%}} ' . $class . ' [ ' . $class::tableName() . ' ] ' . " {{%DELETED%}} {$id_des} {{%RECORD%}}: " . $desc;
+        $model->description = '{{%ADMIN_USER%}} [ ' . Yii::$app->getUser()->getIdentity()->username . ' ] {{%BY%}} ' . $class . ' [ ' . $class::tableName() . ' ] ' . " {{%DELETED%}} {$idDes} {{%RECORD%}}: " . $desc;
         $model->route = Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
-        $model->user_id = yii::$app->getUser()->id;
+        $model->user_id = Yii::$app->getUser()->id;
         $model->save();
     }
 
@@ -97,7 +103,7 @@ class AdminLog extends \yii\base\Event
         $model = new AdminLogModel();
         $model->description = $event->getDescription();
         $model->route = Yii::$app->controller->id . '/' . Yii::$app->controller->action->id;
-        $model->user_id = yii::$app->getUser()->getId();
+        $model->user_id = Yii::$app->getUser()->getId();
         $model->save();
     }
 

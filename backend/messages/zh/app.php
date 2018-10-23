@@ -52,7 +52,7 @@ return [
     '{attribute} cannot be blank.' => '{attribute}不能为空.',
     'Allowed not to be deleted, sub level exsited.' => '还有子项存在,不允许被删除',
     'Failed' => '失败',
-    'Cannot be themself sub.' => '不能是它自己的子类',
+    'Cannot be themselves sub' => '不能是它自己的子类',
     'Send' => '发送',
     'Upload {attribute} error' => '上传{attribute}出错',
     'Filename' => '文件名',
@@ -83,6 +83,7 @@ return [
     'Admin User Id' => '管理员用户Id',
     'IP Address' => 'IP地址',
     'User Id' => '用户Id',
+    'None' => '无',
     /*Public*/
 
     /*Login*/
@@ -127,6 +128,7 @@ return [
     'Are you sure you want to cancel release?' => '您确定要取消发布此文章吗?',
     'uncategoried' => '未分类',
     'Please select' => '请选择',
+    'Please select some' => '请选择一个或多个',
     'Allowed not to be deleted, some article belongs to this category.' => '不允许被删除，还有文章属于此分类',
     'Secret article must set a password' => '加密文章必须设置密码',
     'Article Id' => '文章Id',
@@ -138,6 +140,7 @@ return [
     'Article Title' => '文章标题',
     'Website' => '网址',
     'Replay User Id' => '原评论用户Id',
+    'Comment Message' => '评论内容',
     /*Comment*/
 
     /*Category*/
@@ -284,6 +287,7 @@ return [
     'None item selected!' => '啊哦,神马都都没有选中!',
     'Only picture file be permitted.' => '只能选择图片类型',
     'Choose File' => '选择文件',
+    'Choose Image' => '选择图片',
     /*js*/
 
     /*error*/
@@ -339,7 +343,7 @@ return [
     'Banner Types' => 'Banner类型',
     'Jump Link' => '跳转链接',
     'Entry' => '进入',
-    'This type exits banner' => '该类下还有banner',
+    'Delete failed, banner existed' => '删除失败，先删除banner',
     /*banner*/
 
     /*ad*/

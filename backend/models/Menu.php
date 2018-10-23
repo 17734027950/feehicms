@@ -8,7 +8,7 @@
 
 namespace backend\models;
 
-use yii;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\helpers\FileDependencyHelper;
@@ -26,10 +26,10 @@ class Menu extends \common\models\Menu
     {
         $model = new self();
         $menus = $model->find()->where(['is_display' => self::DISPLAY_YES, 'type' => self::BACKEND_TYPE])->orderBy("sort asc")->asArray()->all();
-        $permissions = yii::$app->getAuthManager()->getPermissionsByUser(yii::$app->getUser()->getId());
+        $permissions = Yii::$app->getAuthManager()->getPermissionsByUser(Yii::$app->getUser()->getId());
         $permissions = array_keys($permissions);
 
-        if( !in_array( yii::$app->getUser()->getId(), yii::$app->getBehavior('access')->superAdminUserIds ) ) {
+        if( !in_array( Yii::$app->getUser()->getId(), Yii::$app->getBehavior('access')->superAdminUserIds ) ) {
             $newMenu = [];
             foreach ($menus as $menu) {
                 $url = $menu['url'];
@@ -62,7 +62,7 @@ class Menu extends \common\models\Menu
                 $arrow = ' arrow';
                 $class = '';
             }
-            $menuName = yii::t('menu', $menu['name']);
+            $menuName = Yii::t('menu', $menu['name']);
             $lis .= <<<EOF
                     <li>
                         <a {$class} href="{$menu['url']}">
@@ -99,7 +99,7 @@ EOF;
             } else {
                 $arrow = '<span class="fa arrow"></span>';
             }
-            $menu_name = yii::t('menu', $menu['name']);
+            $menu_name = Yii::t('menu', $menu['name']);
             $subMenu .= <<<EOF
 
                             <li>
@@ -157,27 +157,21 @@ EOF;
         return $familyTree->getDescendants($id);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function afterSave($insert, $changedAttributes)
     {
-        parent::afterSave($insert, $changedAttributes);
         $this->removeBackendMenuCache();
+        parent::afterSave($insert, $changedAttributes);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function afterDelete()
     {
-        parent::afterDelete();
         $this->removeBackendMenuCache();
+        parent::afterDelete();
     }
 
     public function removeBackendMenuCache()
     {
-        $object = yii::createObject([
+        $object = Yii::createObject([
             'class' => FileDependencyHelper::className(),
             'fileName' => 'backend_menu.txt',
         ]);

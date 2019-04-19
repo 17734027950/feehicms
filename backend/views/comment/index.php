@@ -35,7 +35,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Comments');
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
-                    'layout' => "{items}\n{pager}",
                     'columns' => [
                         [
                             'class' => CheckboxColumn::className(),
@@ -93,16 +92,16 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Comments');
                                 'status_init' => function($url, $model, $key){
                                     $comment = new Comment();
                                     if( $model->status != Comment::STATUS_INIT ) return '';
-                                    return Html::a('<i class="fa fa-check"></i> ' . Yii::t('app', 'Passed'), ['update', 'id' => $model['id']], [
-                                            'class' => 'btn btn-white btn-sm',
+                                    return Html::a('<i class="fa fa-check"></i> ', ['update', 'id' => $model['id']], [
+                                            'class' => 'btn-sm',
                                             'data-confirm' => Yii::t('app', 'Are you sure you want to enable this item?'),
                                             'data-method' => 'post',
                                             'data-pjax' => '0',
                                             'data-params' => [
                                                 $comment->formName() . '[status]' => Comment::STATUS_PASSED
                                             ]
-                                        ]) . Html::a('<i class="fa fa-remove"></i> ' . Yii::t('app', 'Unpassed'), ['update', 'id' => $model['id']], [
-                                            'class' => 'btn btn-white btn-sm',
+                                        ]) . Html::a('<i class="fa fa-remove"></i> ', ['update', 'id' => $model['id']], [
+                                            'class' => 'btn-sm',
                                             'data-confirm' => Yii::t('app', 'Are you sure you want to disable this item?'),
                                             'data-method' => 'post',
                                             'data-pjax' => '0',
@@ -115,8 +114,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Comments');
                                     if( $model->status == Comment::STATUS_INIT ) return '';
                                     $comment = new Comment();
                                     if ($model->status == Comment::STATUS_PASSED ) {
-                                        return Html::a('<i class="fa fa-remove"></i> ' . Yii::t('app', 'Unpassed'), ['update', 'id' => $model['id']], [
-                                            'class' => 'btn btn-white btn-sm',
+                                        return Html::a('<i class="fa fa-remove"></i> ', ['update', 'id' => $model['id']], [
+                                            'class' => 'btn-sm',
                                             'data-confirm' => Yii::t('app', 'Are you sure you want to enable this item?'),
                                             'data-method' => 'post',
                                             'data-pjax' => '0',
@@ -125,8 +124,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Comments');
                                             ]
                                         ]);
                                     } else if( $model->status == Comment::STATUS_UNPASS ) {
-                                        return Html::a('<i class="fa fa-check"></i> ' . Yii::t('app', 'Passed'), ['update', 'id' => $model['id']], [
-                                            'class' => 'btn btn-white btn-sm',
+                                        return Html::a('<i class="fa fa-check"></i> ', ['update', 'id' => $model['id']], [
+                                            'class' => 'btn-sm',
                                             'data-confirm' => Yii::t('app', 'Are you sure you want to disable this item?'),
                                             'data-method' => 'post',
                                             'data-pjax' => '0',

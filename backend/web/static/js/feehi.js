@@ -51,18 +51,59 @@ yii.confirm = function(message, ok, cancel) {
 }
 function viewLayer(url, obj)
 {
+    var area = ['80%', ($(window).height() - 100) + 'px'];
+    if( isMobile || $(window).width() < 640) {
+     area = ['100%', '100%']
+    }
     layer.open({
-        type: 2,
-        title: obj.attr('title'),
-        maxmin: true,
-        shadeClose: true, //点击遮罩关闭层
-        area : ['800px' , '520px'],
-        content: url
+     type: 2,
+     title: obj.attr('title'),
+     maxmin: true,
+     shadeClose: true, //点击遮罩关闭层
+     area: area,
+     content: url
     });
 }
 
+function adaptPhone()
+{
+    var windowWidth = $(window).width();
+    var tables = document.getElementsByTagName("table");
+    if( tables.length <=0  ) return;
+    var table = tables[0];
+    var rows = table.rows;
+    var columns = rows[0].cells.length;
+    var displayColumns = 4;
+    var lastColumnIndex = columns - 1;
+    var i,j = 0;
+    var display = "";
+    if( columns > displayColumns ) {
+        if(windowWidth < 640 || isMobile){
+            display = "none";
+        }
+        for (i = 0; i < rows.length; i++) {
+            for (j = displayColumns ; j < lastColumnIndex; j++) {
+                if( !rows.hasOwnProperty(i) ) continue;
+                if( !rows[i].cells.hasOwnProperty(j) ) continue;
+                rows[i].cells[j].style.display = display;
+            }
+
+        }
+    }
+}
+
+var isMobile = false;
+var Agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
+for (var v = 0; v < Agents.length; v++) {
+    if (navigator.userAgent.indexOf(Agents[v]) > 0) {
+        isMobile = true;
+        break;
+    }
+}
 $(document).ready(function(){
     //$('.info').animate({opacity: 1.0}, 3000).fadeOut('slow');
+    adaptPhone();
+    $(window).resize(adaptPhone());
     //多选后处理
     $(".multi-operate").click(function () {
         var that = $(this);
@@ -236,14 +277,14 @@ $(document).ready(function(){
         if( !this.getAttribute('search') ){//搜素
             config.done = function(value, date, endDate){
                 setTimeout(function(){
-                $(this).val(value);
-                var e = $.Event("keydown");
-                e.keyCode = 13;
-                $('.date-time').trigger(e);
+                    $(this).val(value);
+                    var e = $.Event("keydown");
+                    e.keyCode = 13;
+                    $(".date-time[search!='true']").trigger(e);
                 },100)
             }
-            delete config['value'];
         }
+        delete config['value'];
 
         laydate.render(config);
     });

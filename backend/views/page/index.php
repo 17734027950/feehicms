@@ -34,7 +34,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Pages');
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
-                    'layout' => "{items}\n{pager}",
                     'columns' => [
                         [
                             'class' => CheckboxColumn::className(),
@@ -47,14 +46,10 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Pages');
                         ],
                         [
                             'attribute' => 'title',
-                            'format' => 'html',
-                            'width' => '170',
-                            'value' => function ($model, $key, $index, $column) {
-                                return Html::a($model->title, 'javascript:void(0)', [
-                                    'title' => $model->thumb,
-                                    'class' => 'title'
-                                ]);
-                            }
+                        ],
+                        [
+                            'attribute' => 'sub_title',
+                            'label' => Yii::t("app", "Page Sign")
                         ],
                         [
                             'attribute' => 'author_name',
@@ -63,7 +58,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Pages');
                             'label' => Yii::t('app', 'Url'),
                             'format' => 'raw',
                             'value' => function($model){
-                                return "<a target='_blank' href='" . Yii::$app->params['site']['url'] . 'page/' . $model->sub_title . "'>" . Yii::$app->params['site']['url'] . 'page/' . $model->sub_title . '</a>';
+                                return "<a target='_blank' href='" . Yii::$app->params['site']['url'] . 'index.php?r=page/' . $model->sub_title . "'>" . Yii::$app->params['site']['url'] . 'index.php?r=page/' . $model->sub_title . '</a>';
                             },
                         ],
                         [
@@ -95,13 +90,13 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Pages');
                             'class' => ActionColumn::className(),
                             'buttons' => [
                                 'comment' => function ($url, $model, $key) {
-                                    return Html::a('<i class="fa  fa-commenting-o" aria-hidden="true"></i> ' . Yii::t('app', 'Comments'), Url::to([
+                                    return Html::a('<i class="fa  fa-commenting-o" aria-hidden="true"></i> ', Url::to([
                                         'comment/index',
                                         'CommentSearch[aid]' => $model->id
                                     ]), [
                                         'title' => Yii::t('app', 'Comments'),
                                         'data-pjax' => '0',
-                                        'class' => 'btn btn-white btn-sm openContab',
+                                        'class' => 'btn-sm openContab',
                                     ]);
                                 }
                             ],

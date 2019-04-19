@@ -12,6 +12,10 @@ FeehiCMS没有对yii2做任何的修改、封装，但是把yii2的一些优秀�
 
 更新记录
 -------
+2.0.6 后台管理适配手机;增加后台代码注释操作运行命令自动生成权限;优化代码;
+
+2.0.5 优化gii生成后台curd;增加列表页搜索框区域;增加form表单laydate、chosenSelect;修复其他bug
+
 2.0.4 修复bug;增强seo
 
 2.0.3 增加后台详情页;增加x.com/cms/frontend/web访问;修复批量删除不显示原因bug
@@ -64,6 +68,7 @@ FeehiCMS没有对yii2做任何的修改、封装，但是把yii2的一些优秀�
  * restful api
  * 文章管理 
  * 操作日志
+ * 适配手机
  
  FeehiCMS提供完备的web系统基础通用功能，包括前后台菜单管理,文章标签,广告,banner,缓存,网站设置,seo设置,邮件设置,分类管理,单页...
  
@@ -189,8 +194,9 @@ FeehiCMS没有对yii2做任何的修改、封装，但是把yii2的一些优秀�
 * [优悦娱乐网](http://www.qqyouyue.com/)  
 * [吉安市食品药品监督管理局](http://www.jamsda.gov.cn/)  
 * [完美娱乐](http://www.qqwanmei.com/)  
-* [北京大学附属中学](http://group-ht.pkuschool.edu.cn/)  
-* [微信公众号蚂蚁鲜生](http://www.chijidun.com/) 
+* [房产网](http://www.itufang.cn/)
+* [中丞法拍网](http://www.fapaihouse.com/)  
+* [51前途网](http://www.51uit.com/) 
 * [用友财务软件](http://www.myyonyou.cn/) 
 *  ......
 
@@ -210,6 +216,16 @@ FeehiCMS没有对yii2做任何的修改、封装，但是把yii2的一些优秀�
 ![后台文章编辑](docs/backend_custom_setting.png)
 
 ![后台文章编辑](docs/backend_log.png)
+
+![后台手机登录](docs/backend_mobile_login.jpg)
+
+![后台手机文章](docs/backend_mobile_article.jpg)
+
+![后台手机文章编辑](docs/backend_mobile_article_edit.jpg)
+
+![后台手机评论详情](docs/backend_mobile_comment_view.jpg)
+
+![前台手机首页](docs/frontend_mobile.jpg)
 
 
 特别鸣谢

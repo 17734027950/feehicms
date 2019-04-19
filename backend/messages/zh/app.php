@@ -92,7 +92,7 @@ return [
     'Please contact admin for reset password' => '请联系管理员重置密码',
     'Captcha' => '验证码',
     'Verification code error.' => '验证码错误。',
-    'Login' => '登陆',
+    'Login' => '登录',
     'Verification Code' => '验证码',
     /*Login*/
 
@@ -132,6 +132,9 @@ return [
     'Allowed not to be deleted, some article belongs to this category.' => '不允许被删除，还有文章属于此分类',
     'Secret article must set a password' => '加密文章必须设置密码',
     'Article Id' => '文章Id',
+    'Article Images' => '文章配图',
+    'Choose Image Multi' => '选择多图',
+    "Page Sign" => "单页地址",
     /*Article*/
 
     /*Comment*/
@@ -146,6 +149,8 @@ return [
     /*Category*/
     'Parent Category Id' => '父分类Id',
     'Parent Category Name' => '父分类名称',
+    'Category Template' => '分类模板',
+    'Article Template' => '文章模板',
     /*Category*/
 
     /*friend link*/
@@ -158,8 +163,9 @@ return [
     'HTTP Method' => '请求方式',
     'Input new' => '输入',
     'Sub Menu exists, cannot be deleted' => '该菜单还有子菜单，不能被删除',
-    'Select from article category' => '从文章分类选择',
+    'Chose from article category' => '从文章分类选择',
     'Parent Menu Name' => '父分类菜单名称',
+    'Url is not a correct json format' => '地址的json格式错误',
     /*menu*/
 
     /*setting*/
@@ -277,7 +283,7 @@ return [
     'Permissions' => '权限',
     'Group' => '组',
     'Assign Permission' => '分配权限',
-    'Select from exists' => '从已有选择',
+    'Chose from exists' => '从已有选择',
     /*rbac*/
 
     /*js*/
@@ -351,4 +357,14 @@ return [
     'Ad' => '广告',
     'Ad Explain' => '广告描述',
     /*ad*/
+
+    /*webuploader*/
+    'or dragged picture here' => '或将照片拖到这里',
+    'Confirm use' => '确定使用',
+    'Pause uploading' => '暂停上传',
+    'Continue uploading' => '继续上传',
+    'Start uploading' => '开始上传',
+    'Upload Image' => '上传图片',
+    'Click select image' => '点击选择图片',
+    /*webuploader*/
 ];

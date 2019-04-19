@@ -25,6 +25,10 @@ use yii\web\UnprocessableEntityHttpException;
 class SettingController extends \yii\web\Controller
 {
 
+    /**
+     * @auth - item group=设置 category=自定义设置 description-post=删除  sort=132 method=post
+     * @return array
+     */
     public function actions()
     {
         return [
@@ -38,6 +42,7 @@ class SettingController extends \yii\web\Controller
     /**
      * 网站设置
      *
+     * @auth - item group=设置 category=网站设置 description=网站设置 sort-get=100 sort-post=101 method=get,post
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
@@ -67,6 +72,7 @@ class SettingController extends \yii\web\Controller
     /**
      * 自定义设置
      *
+     * @auth - item group=设置 category=自定义设置 description=修改 sort-get=130 sort-post=131 method=get,post
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
@@ -92,6 +98,7 @@ class SettingController extends \yii\web\Controller
     /**
      * 增加自定义设置项
      *
+     * @auth - item group=设置 category=自定义设置 description=自定义设置创建 sort-get=133 sort-post=134 method=get,post
      * @return array|string
      * @throws UnprocessableEntityHttpException
      * @throws \yii\base\InvalidConfigException
@@ -129,8 +136,9 @@ class SettingController extends \yii\web\Controller
     /**
      * 修改自定义设置项
      *
+     * @auth - item group=设置 category=自定义设置 description=自定义设置修改 sort-get=135 sort-post=136 method=get,post
      * @param string $id
-     * @return array
+     * @return string
      * @throws UnprocessableEntityHttpException
      */
     public function actionCustomUpdate($id = '')
@@ -162,6 +170,7 @@ class SettingController extends \yii\web\Controller
     /**
      * 邮件smtp设置
      *
+     * @auth - item group=设置 category=smtp设置 description=修改 sort-get=110 sort-post=111 method=get,post
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
@@ -191,6 +200,7 @@ class SettingController extends \yii\web\Controller
     /**
      * 发送测试邮件确认smtp设置是否正确
      *
+     * @auth - item group=设置 category=smtp设置 description-post=测试stmp设置 sort-post=112 method=post
      * @return mixed
      * @throws BadRequestHttpException
      * @throws \yii\base\InvalidConfigException
